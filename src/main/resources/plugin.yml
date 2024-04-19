@@ -1,0 +1,39 @@
+name: PetControl
+version: '${version}'
+main: org.infotoast.petcontrol.PetControl
+api-version: '1.20'
+description: Manages pets, transfers ownership, and tames wild animals
+load: POSTWORLD
+author: Frank
+website: infotoast.org
+commands:
+  petinfo:
+    description: Gets info on a tamable animal
+    permission: petcontrol.petinfo
+    usage: "Usage: /<command>"
+  transferpetowner:
+    description: Transfers ownership of a pet
+    permission: petcontrol.transferpetowner
+    usage: "Usage: /<command> <owner>"
+  tamepet:
+    description: Tames an unowned tamable mob
+    permission: petcontrol.tamepet
+    usage: "/<command> [owner]"
+  togglesit:
+    description: Toggles whether an animal is sitting, regardless of owner
+    permission: petcontrol.togglesit
+    usage: "/<command>"
+
+permissions:
+  petcontrol.petinfo:
+    description: Allows you to use /petinfo
+    default: true
+  petcontrol.transferpetowner:
+    description: Allows you to transfer pet ownership with /transferpetowner
+    default: op
+  petcontrol.tamepet:
+    description: Allows you to tame pets using /tamepet
+    default: op
+  petcontrol.togglesit:
+    description: Allows you to toggle pet sitting with /togglesit
+    default: op
