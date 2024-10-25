@@ -2,7 +2,7 @@
 
 PetControl allows server admins to view info on pets, change ownership, sit/stand pets, and tame a pet to themselves.
 
-Supports Minecraft 1.20-1.20.6
+Supports Minecraft 1.21
 
 ## Commands
 * /petinfo: Shows information on the pet you are looking at
