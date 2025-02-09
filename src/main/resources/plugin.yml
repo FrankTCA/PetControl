@@ -23,6 +23,10 @@ commands:
     description: Toggles whether an animal is sitting, regardless of owner
     permission: petcontrol.togglesit
     usage: "/<command>"
+  healpet:
+    description: Heals the tamable animal you're looking at
+    permission: petcontrol.heal
+    usage: "/<command>""
 
 permissions:
   petcontrol.petinfo:
@@ -39,4 +43,7 @@ permissions:
     default: op
   petcontrol.togglesit:
     description: Allows you to toggle pet sitting with /togglesit
+    default: op
+  petcontrol.heal:
+    description: Allows you to heal pets with /healpet
     default: op
