@@ -9,3 +9,4 @@ Supports Minecraft 1.21
 * /transferpetowner <new owner>: Transfers ownership of a pet
 * /tamepet: Tames a pet to yourself
 * /togglesit: Tell any pet to sit/stand
+* /healpet: Heals the pet you are facing
