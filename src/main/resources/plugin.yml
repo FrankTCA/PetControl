@@ -26,7 +26,7 @@ commands:
   healpet:
     description: Heals the tamable animal you're looking at
     permission: petcontrol.heal
-    usage: "/<command>""
+    usage: "/<command>"
 
 permissions:
   petcontrol.petinfo:
