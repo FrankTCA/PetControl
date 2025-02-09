@@ -31,8 +31,11 @@ permissions:
   petcontrol.transferpetowner:
     description: Allows you to transfer pet ownership with /transferpetowner
     default: op
-  petcontrol.tamepet:
-    description: Allows you to tame pets using /tamepet
+  petcontrol.tamepet.self:
+    description: Allows you to tame pet to be owned by yourself
+    default: op
+  petcontrol.tamepet.others:
+    description: Allows you to tame pets to be given to others
     default: op
   petcontrol.togglesit:
     description: Allows you to toggle pet sitting with /togglesit
