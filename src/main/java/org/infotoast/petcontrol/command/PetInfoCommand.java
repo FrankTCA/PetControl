@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class PetInfoCommand implements CommandExecutor {
@@ -38,11 +39,13 @@ public class PetInfoCommand implements CommandExecutor {
                         String isTame = (tamableAnimal.isTame()) ? "Yes" : "No";
                         sender.sendMessage("§6§l| §r§1Tamed: §r§9" + isTame);
                         if (tamableAnimal.isTame()) {
-                            UUID ownerUUID = tamableAnimal.getOwnerUUID();
-                            String ownerName = Bukkit.getOfflinePlayer(ownerUUID).getName();
-                            sender.sendMessage("§6§l| §r§1Owner: §r§9" + ownerName);
-                            String isSitting = (tamableAnimal.isInSittingPose()) ? "Yes" : "No";
-                            sender.sendMessage("§6§l| §r§1Sitting: §r§9" + isSitting);
+                            UUID ownerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
+                            if (ownerUUID != null) {
+                                String ownerName = Bukkit.getOfflinePlayer(ownerUUID).getName();
+                                sender.sendMessage("§6§l| §r§1Owner: §r§9" + ownerName);
+                                String isSitting = (tamableAnimal.isInSittingPose()) ? "Yes" : "No";
+                                sender.sendMessage("§6§l| §r§1Sitting: §r§9" + isSitting);
+                            }
                         }
                         sender.sendMessage("§6§l------------------------------------");
                         return true;

@@ -1,16 +1,20 @@
 package org.infotoast.petcontrol.command;
 
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.LivingEntity;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class TransferPetOwnerCommand implements CommandExecutor {
@@ -32,12 +36,12 @@ public class TransferPetOwnerCommand implements CommandExecutor {
                     if (animalFacing instanceof TamableAnimal) {
                         TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
                         if (tamableAnimal.isTame()) {
-                            UUID lastOwnerUUID = tamableAnimal.getOwnerUUID();
+                            UUID lastOwnerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
                             String lastOwnerName = Bukkit.getOfflinePlayer(lastOwnerUUID).getName();
                             if (args.length == 1) {
                                 String nextOwnerName = args[0];
-                                UUID newOwnerUUID = Bukkit.getOfflinePlayer(nextOwnerName).getUniqueId();
-                                tamableAnimal.setOwnerUUID(newOwnerUUID);
+                                LivingEntity newOwner = ((CraftLivingEntity) Objects.requireNonNull(Bukkit.getPlayer(nextOwnerName))).getHandle();
+                                tamableAnimal.setOwner(newOwner);
                                 sender.sendMessage("§bLast Owner: " + lastOwnerName);
                                 sender.sendMessage("§bNew Owner: " + nextOwnerName);
                                 sender.sendMessage("§5Ownership successfully transferred!");
