@@ -56,7 +56,6 @@ public class RemainWithinRadiusGoal extends Goal {
 
     @Override
     public void start() {
-        System.out.println("Radius 5: " + this.radius);
         this.timeToRecalcPath = 0;
         int absoluteValue = this.radius / 2;
         int xR = tamable.random.nextInt(absoluteValue*2);

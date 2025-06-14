@@ -44,7 +44,6 @@ public class RoamCommand implements CommandExecutor {
                                 int x;
                                 int z;
                                 int radius = Integer.parseInt(args[0]);
-                                System.out.println("Radius: " + radius);
                                 if (args.length >= 3) {
                                     x = Integer.parseInt(args[1]);
                                     z = Integer.parseInt(args[2]);
@@ -81,10 +80,12 @@ public class RoamCommand implements CommandExecutor {
 
                                 if (ownerUUID.equals(player.getUniqueId()) || sender.hasPermission("petcontrol.roam.others")) {
                                     if (tamableAnimal instanceof Cat) {
+                                        playerFacing.remove();
                                         RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, guarded);
                                         sender.sendMessage("§bCat is now roaming. UUID: " + rcat.getUUID());
                                         return true;
                                     } else if (tamableAnimal instanceof Wolf) {
+                                        playerFacing.remove();
                                         RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, guarded);
                                         sender.sendMessage("§bDog is now roaming. UUID: " + rdog.getUUID());
                                         return true;

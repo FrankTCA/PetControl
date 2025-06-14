@@ -66,7 +66,7 @@ public class CacheFileManager {
     }
 
     private void writeFile() {
-        try (FileOutputStream fos = new FileOutputStream(this.cacheFile)) {
+        try (FileOutputStream fos = new FileOutputStream(this.cacheFile, false)) {
             fos.write(data.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);

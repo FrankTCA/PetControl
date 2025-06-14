@@ -105,7 +105,6 @@ public class RoamingAnimalEntry {
         int uuidLength = bytes[14];
         byte[] uuidB = Arrays.copyOfRange(bytes, 15, 15+uuidLength);
         String uuidStr = new String(uuidB, StandardCharsets.UTF_8);
-        System.out.println(uuidStr + " Length " + uuidLength);
         UUID uuid = UUID.fromString(uuidStr);
         boolean guarded = bytes[bytes.length-2] == 0x1;
         RoamingAnimal animal = convertIdToAnimal(animalId);

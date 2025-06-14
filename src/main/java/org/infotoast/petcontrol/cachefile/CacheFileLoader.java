@@ -32,7 +32,6 @@ public class CacheFileLoader {
                     temp.clear();
 
                     RoamingAnimalEntry ent = RoamingAnimalEntry.readBytes(b);
-                    System.out.println(ent);
                     data.addAnimal(ent);
                 }
             }

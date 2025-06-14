@@ -82,8 +82,6 @@ public class RoamingCat extends Cat {
         rcat.setVariant(cat.getVariant());
         PetControl.cacheManager.removeByUUID(cat.getUUID());
         cat.remove(RemovalReason.DISCARDED);
-        System.out.println(cat);
-        System.out.println(rcat);
         BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> {
             PetListener.entityAddLock = false;
