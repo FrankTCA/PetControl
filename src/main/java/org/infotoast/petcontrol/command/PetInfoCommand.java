@@ -10,6 +10,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.customanimals.RoamingCat;
+import org.infotoast.petcontrol.customanimals.RoamingDog;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -45,6 +47,11 @@ public class PetInfoCommand implements CommandExecutor {
                                 sender.sendMessage("§6§l| §r§1Owner: §r§9" + ownerName);
                                 String isSitting = (tamableAnimal.isInSittingPose()) ? "Yes" : "No";
                                 sender.sendMessage("§6§l| §r§1Sitting: §r§9" + isSitting);
+                                if (tamableAnimal instanceof RoamingCat || tamableAnimal instanceof RoamingDog) {
+                                    sender.sendMessage("§6§l| §r§1Roaming: §r§9Yes");
+                                } else {
+                                    sender.sendMessage("§6§l| §r§1Roaming: §r§9No");
+                                }
                             }
                         }
                         sender.sendMessage("§6§l------------------------------------");
