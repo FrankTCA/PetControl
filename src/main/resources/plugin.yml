@@ -27,6 +27,10 @@ commands:
     description: Heals the tamable animal you're looking at
     permission: petcontrol.heal
     usage: "/<command>"
+  roam:
+    description: Makes the pet roam around instead of following you
+    permission: petcontrol.roam
+    usage: "/<command> <radius> [center x] [center z] [guarded]"
 
 permissions:
   petcontrol.petinfo:
@@ -46,4 +50,13 @@ permissions:
     default: op
   petcontrol.heal:
     description: Allows you to heal pets with /healpet
+    default: op
+  petcontrol.roam:
+    description: Makes pets roam around instead of following you
+    default: true
+  petcontrol.roam.others:
+    description: Allows you to roam other's pets
+    default: op
+  petcontrol.roam.guarded:
+    description: Allows you to set guarded mode when pets are roaming
     default: op
