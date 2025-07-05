@@ -3,7 +3,7 @@ version: '${version}'
 main: org.infotoast.petcontrol.PetControl
 api-version: '1.21'
 description: Manages pets, transfers ownership, and tames wild animals
-load: POSTWORLD
+load: STARTUP
 author: Frank
 website: infotoast.org
 commands:
@@ -31,6 +31,10 @@ commands:
     description: Makes the pet roam around instead of following you
     permission: petcontrol.roam
     usage: "/<command> <radius> [center x] [center z] [guarded]"
+  follow:
+    description: Makes a roaming animal go back to follow (normal) mode
+    permission: petcontrol.follow
+    usage: "/<command>"
 
 permissions:
   petcontrol.petinfo:
@@ -59,4 +63,10 @@ permissions:
     default: op
   petcontrol.roam.guarded:
     description: Allows you to set guarded mode when pets are roaming
+    default: op
+  petcontrol.follow:
+    description: Allows you to use /follow
+    default: true
+  petcontrol.follow.others:
+    description: Allows you to set other's animals to follow mode
     default: op

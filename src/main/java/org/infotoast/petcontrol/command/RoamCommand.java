@@ -74,10 +74,6 @@ public class RoamCommand implements CommandExecutor {
                                     }
                                 }
 
-
-                                BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-                                scheduler.scheduleSyncDelayedTask(plugin, () -> PetListener.entityAddLock = false, 3L);
-
                                 if (ownerUUID.equals(player.getUniqueId()) || sender.hasPermission("petcontrol.roam.others")) {
                                     if (tamableAnimal instanceof Cat) {
                                         playerFacing.remove();
@@ -113,7 +109,7 @@ public class RoamCommand implements CommandExecutor {
                 }
             } else {
                 sender.sendMessage("§4You do not have permission to use this command.");
-                return false;
+                return true;
             }
         } else {
             sender.sendMessage("Command must be run as a player.");

@@ -1,18 +1,15 @@
 package org.infotoast.petcontrol.command;
 
-import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import org.bukkit.entity.Tameable;
 import org.infotoast.petcontrol.PetControl;
-
-import java.util.logging.Level;
 
 public class TamePetCommand implements CommandExecutor {
     private final PetControl plugin;
@@ -28,28 +25,16 @@ public class TamePetCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 Entity playerFacing = PetControl.getPlayerFacingEntity(player);
                 if (playerFacing != null) {
-                    CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
-                    net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
-                    if (animalFacing instanceof TamableAnimal) {
-                        TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
-                        if (!tamableAnimal.isTame()) {
-                            net.minecraft.world.entity.player.Player newOwner;
+                    if (playerFacing instanceof Tameable) {
+                        Tameable tamableAnimal = (Tameable) playerFacing;
+                        if (!tamableAnimal.isTamed()) {
+                            OfflinePlayer newOwner;
                             if (args.length == 1) {
                                 if (sender.hasPermission("petcontrol.tamepet.others")) {
                                     String nextOwnerName = args[0];
-                                    CraftPlayer craftPlayer = (CraftPlayer) Bukkit.getPlayer(nextOwnerName);
-                                    if (craftPlayer != null) {
-                                        net.minecraft.world.entity.Entity thePlayerEntity = craftPlayer.getHandleRaw();
-                                        if (thePlayerEntity instanceof net.minecraft.world.entity.player.Player) {
-                                            newOwner = (net.minecraft.world.entity.player.Player) thePlayerEntity;
-                                        } else {
-                                            plugin.logger.log(Level.SEVERE, "Assert net.minecraft.world.entity.player.Player");
-                                            sender.sendMessage("§4Something went wrong! Check console for more info.");
-                                            return false;
-                                        }
-                                    } else {
-                                        plugin.logger.log(Level.SEVERE, "Assert craftPlayer is not null");
-                                        sender.sendMessage("§4Something went wrong! Check console for more info.");
+                                    newOwner = Bukkit.getOfflinePlayer(nextOwnerName);
+                                    if (!newOwner.hasPlayedBefore()) {
+                                        sender.sendMessage("§4Player either does not exist or has not played before!");
                                         return false;
                                     }
                                 } else {
@@ -58,14 +43,7 @@ public class TamePetCommand implements CommandExecutor {
                                 }
                             } else if (args.length == 0) {
                                 if (sender.hasPermission("petcontrol.tamepet.self")) {
-                                    net.minecraft.world.entity.Entity thePlayerEntity = ((CraftPlayer)player).getHandleRaw();
-                                    if (thePlayerEntity instanceof net.minecraft.world.entity.player.Player) {
-                                        newOwner = (net.minecraft.world.entity.player.Player) thePlayerEntity;
-                                    } else {
-                                        plugin.logger.log(Level.SEVERE, "Assert playerEntity instance of net.minecraft.world.entity.player.Player");
-                                        sender.sendMessage("§4Something went wrong! Check console for more info.");
-                                        return false;
-                                    }
+                                    newOwner = (Player)sender;
                                 } else {
                                     sender.sendMessage("§4You do not have permission to tame pets for yourself.");
                                     return false;
@@ -74,7 +52,7 @@ public class TamePetCommand implements CommandExecutor {
                                 sender.sendMessage("§4Too many arguments. Command usage: tamepet <Player>.");
                                 return false;
                             }
-                            tamableAnimal.tame(newOwner);
+                            tamableAnimal.setOwner(newOwner);
                             sender.sendMessage("§bAnimal has been tamed!");
                             return true;
                         }
@@ -88,7 +66,7 @@ public class TamePetCommand implements CommandExecutor {
                 return false;
             }
             sender.sendMessage("§4Access denied.");
-            return false;
+            return true;
         }
         sender.sendMessage("§4This command must be sent by a player!");
         return false;
