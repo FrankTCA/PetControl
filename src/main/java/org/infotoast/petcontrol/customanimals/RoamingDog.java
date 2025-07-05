@@ -69,6 +69,36 @@ public class RoamingDog extends Wolf {
         return rdog;
     }
 
+    public Wolf convertToWolf() {
+        PetListener.entityAddLock = true;
+        Wolf wolf = new Wolf(EntityType.WOLF, this.level());
+        level().addFreshEntity(wolf);
+        wolf.setPos(this.getX(), this.getY(), this.getZ());
+        ((org.bukkit.entity.Tameable)Bukkit.getEntity(wolf.getUUID())).setOwner(Bukkit.getOfflinePlayer(this.getOwnerReference().getUUID()));
+        wolf.setAge(this.getAge());
+        wolf.setAirSupply(this.getAirSupply());
+        wolf.setCustomName(this.getCustomName());
+        wolf.setCustomNameVisible(this.isCustomNameVisible());
+        wolf.setGlowingTag(this.hasGlowingTag());
+        wolf.setInvulnerable(this.isInvulnerable());
+        wolf.setInvisible(this.isInvisible());
+        wolf.setNoGravity(this.isNoGravity());
+        wolf.setSilent(this.isSilent());
+        wolf.setAbsorptionAmount(this.getAbsorptionAmount());
+        wolf.setHealth(this.getHealth());
+        wolf.setLeashData(this.getLeashData());
+        wolf.setNoAi(this.isNoAi());
+        wolf.setPersistenceRequired(true);
+        if (wolf.isSleeping()) {
+            wolf.setSleepingPos(this.getSleepingPos().get());
+        }
+        wolf.setCollarColor(this.getCollarColor());
+        wolf.setVariant(this.getVariant());
+        PetControl.cacheManager.removeByUUID(this.getUUID());
+        this.remove(RemovalReason.DISCARDED);
+        return wolf;
+    }
+
     @Override
     protected void registerGoals() {
         this.remainWithinRadiusGoal = new RemainWithinRadiusGoal(this, 1.0D);

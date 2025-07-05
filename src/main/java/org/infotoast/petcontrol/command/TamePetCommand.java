@@ -66,7 +66,7 @@ public class TamePetCommand implements CommandExecutor {
                 return false;
             }
             sender.sendMessage("§4Access denied.");
-            return false;
+            return true;
         }
         sender.sendMessage("§4This command must be sent by a player!");
         return false;

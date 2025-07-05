@@ -36,7 +36,7 @@ public class HealPetCommand implements CommandExecutor {
                 return false;
             }
             sender.sendMessage("§4Access denied.");
-            return false;
+            return true;
         }
         sender.sendMessage("§4You must be a player to use this command!");
         return false;

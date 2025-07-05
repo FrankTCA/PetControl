@@ -90,6 +90,41 @@ public class RoamingCat extends Cat {
         return rcat;
     }
 
+    public Cat convertToCat() {
+        PetListener.entityAddLock = true;
+        Cat cat = new Cat(EntityType.CAT, this.level());
+        level().addFreshEntity(cat);
+        cat.setPos(this.getX(), this.getY(), this.getZ());
+        ((org.bukkit.entity.Tameable)Bukkit.getEntity(cat.getUUID())).setOwner(Bukkit.getOfflinePlayer(this.getOwnerReference().getUUID()));
+        cat.setAge(this.getAge());
+        cat.setAirSupply(this.getAirSupply());
+        cat.setCustomName(this.getCustomName());
+        cat.setCustomNameVisible(this.isCustomNameVisible());
+        cat.setGlowingTag(this.hasGlowingTag());
+        cat.setInvulnerable(this.isInvulnerable());
+        cat.setInvisible(this.isInvisible());
+        cat.setNoGravity(this.isNoGravity());
+        cat.setSilent(this.isSilent());
+        cat.setAbsorptionAmount(this.getAbsorptionAmount());
+        cat.setHealth(this.getHealth());
+        cat.setLeashData(this.getLeashData());
+        cat.setNoAi(this.isNoAi());
+        cat.setPersistenceRequired(true);
+        if (this.isSleeping()) {
+            cat.setSleepingPos(this.getSleepingPos().get());
+        }
+        cat.setCollarColor(this.getCollarColor());
+        cat.setVariant(this.getVariant());
+        PetControl.cacheManager.removeByUUID(this.getUUID());
+        this.remove(RemovalReason.DISCARDED);
+        BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
+        scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> {
+            PetListener.entityAddLock = false;
+        }, 3L);
+
+        return cat;
+    }
+
     @Override
     protected void registerGoals() {
         this.temptGoal = new CatTemptGoal(this, 0.6, (stack) -> stack.is(ItemTags.CAT_FOOD), true);
