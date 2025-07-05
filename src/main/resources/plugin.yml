@@ -3,7 +3,7 @@ version: '${version}'
 main: org.infotoast.petcontrol.PetControl
 api-version: '1.21'
 description: Manages pets, transfers ownership, and tames wild animals
-load: POSTWORLD
+load: STARTUP
 author: Frank
 website: infotoast.org
 commands:

@@ -18,21 +18,19 @@ public class PetListener implements Listener {
     @EventHandler(priority=EventPriority.MONITOR)
     public void onChunkLoad(ChunkLoadEvent event) {
         if (!entityAddLock) {
-            for (org.bukkit.entity.Entity entity : event.getChunk().getEntities())
-            if (entity.getType().equals(EntityType.CAT) || entity.getType().equals(EntityType.WOLF)) {
+            for (org.bukkit.entity.Entity entity : event.getChunk().getEntities()) {
+                //if (entity instanceof CraftCat || entity instanceof CraftWolf) {
                 RoamingAnimalEntry ent = PetControl.cacheManager.checkIfRoamingAnimalFromUUID(entity.getUniqueId());
                 if (ent != null) {
-                    //BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
-                    //scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> {
-                        if (ent.getAnimal().equals(RoamingAnimal.CAT)) {
-                            RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat)entity).getHandle(),
-                                    ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                        } else {
-                            RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf)entity).getHandle(),
-                                    ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                        }
-                    //}, 5L);
+                    if (ent.getAnimal().equals(RoamingAnimal.CAT)) {
+                        RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
+                                ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
+                    } else {
+                        RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
+                                ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
+                    }
                 }
+                //}
             }
         }
     }

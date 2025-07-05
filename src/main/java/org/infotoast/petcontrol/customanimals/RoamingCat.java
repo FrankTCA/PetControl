@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.AABB;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
@@ -60,7 +61,7 @@ public class RoamingCat extends Cat {
         PetListener.entityAddLock = true;
         RoamingCat rcat = new RoamingCat(cat.level(),  centerX, centerZ, radius, guarded);
         rcat.setPos(cat.getX(), cat.getY(), cat.getZ());
-        rcat.tame((Player) cat.getOwner());
+        ((org.bukkit.entity.Tameable)Bukkit.getEntity(rcat.getUUID())).setOwner(Bukkit.getOfflinePlayer(cat.getOwnerReference().getUUID()));
         rcat.setAge(cat.getAge());
         rcat.setAirSupply(cat.getAirSupply());
         rcat.setCustomName(cat.getCustomName());

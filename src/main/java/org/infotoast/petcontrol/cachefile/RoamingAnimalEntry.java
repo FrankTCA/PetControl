@@ -113,6 +113,6 @@ public class RoamingAnimalEntry {
 
     @Override
     public String toString() {
-        return "RoamingAnimal " + convertIdToAnimal(animalId) + " center: " + centerX + ", " + centerZ + " radius: " + radius;
+        return "RoamingAnimal " + convertIdToAnimal(animalId) + " center: " + centerX + ", " + centerZ + " radius: " + radius + " uuid: " + uuid + " guarded: " + guarded;
     }
 }

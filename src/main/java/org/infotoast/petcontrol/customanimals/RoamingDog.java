@@ -44,7 +44,7 @@ public class RoamingDog extends Wolf {
         scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> PetListener.entityAddLock = false, 3L);
         RoamingDog rdog = new RoamingDog(wolf.level(), centerX, centerZ, radius, guarded);
         rdog.setPos(wolf.getX(), wolf.getY(), wolf.getZ());
-        rdog.tame((Player) wolf.getOwner());
+        ((org.bukkit.entity.Tameable)Bukkit.getEntity(rdog.getUUID())).setOwner(Bukkit.getOfflinePlayer(wolf.getOwnerReference().getUUID()));
         rdog.setAge(wolf.getAge());
         rdog.setAirSupply(wolf.getAirSupply());
         rdog.setCustomName(wolf.getCustomName());

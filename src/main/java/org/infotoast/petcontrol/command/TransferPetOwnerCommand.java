@@ -1,17 +1,14 @@
 package org.infotoast.petcontrol.command;
 
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.LivingEntity;
-
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import org.bukkit.entity.Tameable;
 import org.infotoast.petcontrol.PetControl;
 
 import java.util.Objects;
@@ -31,16 +28,14 @@ public class TransferPetOwnerCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 Entity playerFacing = PetControl.getPlayerFacingEntity(player);
                 if (playerFacing != null) {
-                    CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
-                    net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
-                    if (animalFacing instanceof TamableAnimal) {
-                        TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
-                        if (tamableAnimal.isTame()) {
-                            UUID lastOwnerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
+                    if (playerFacing instanceof Tameable) {
+                        Tameable tamableAnimal = (Tameable) playerFacing;
+                        if (tamableAnimal.isTamed()) {
+                            UUID lastOwnerUUID = Objects.requireNonNull(tamableAnimal.getOwnerUniqueId());
                             String lastOwnerName = Bukkit.getOfflinePlayer(lastOwnerUUID).getName();
                             if (args.length == 1) {
                                 String nextOwnerName = args[0];
-                                LivingEntity newOwner = ((CraftLivingEntity) Objects.requireNonNull(Bukkit.getPlayer(nextOwnerName))).getHandle();
+                                OfflinePlayer newOwner = Bukkit.getOfflinePlayer(nextOwnerName);
                                 tamableAnimal.setOwner(newOwner);
                                 sender.sendMessage("§bLast Owner: " + lastOwnerName);
                                 sender.sendMessage("§bNew Owner: " + nextOwnerName);
