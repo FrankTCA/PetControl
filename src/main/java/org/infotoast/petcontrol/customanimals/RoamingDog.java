@@ -16,6 +16,7 @@ import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
 import org.infotoast.petcontrol.PetListener;
@@ -39,9 +40,6 @@ public class RoamingDog extends Wolf {
     }
 
     public static RoamingDog convertFromWolf(Wolf wolf, int centerX, int centerZ, int radius, boolean guarded) {
-        PetListener.entityAddLock = true;
-        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-        scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> PetListener.entityAddLock = false, 3L);
         RoamingDog rdog = new RoamingDog(wolf.level(), centerX, centerZ, radius, guarded);
         rdog.setPos(wolf.getX(), wolf.getY(), wolf.getZ());
         ((org.bukkit.entity.Tameable)Bukkit.getEntity(rdog.getUUID())).setOwner(Bukkit.getOfflinePlayer(wolf.getOwnerReference().getUUID()));
@@ -64,13 +62,16 @@ public class RoamingDog extends Wolf {
         }
         rdog.setCollarColor(wolf.getCollarColor());
         rdog.setVariant(wolf.getVariant());
+        Entity bEnt = Bukkit.getEntity(rdog.getUUID());
+        assert bEnt != null;
+        PetControl.roamingTeam.addEntity(bEnt);
+        bEnt.addScoreboardTag("roaming");
         PetControl.cacheManager.removeByUUID(wolf.getUUID());
         wolf.remove(RemovalReason.DISCARDED);
         return rdog;
     }
 
     public Wolf convertToWolf() {
-        PetListener.entityAddLock = true;
         Wolf wolf = new Wolf(EntityType.WOLF, this.level());
         level().addFreshEntity(wolf);
         wolf.setPos(this.getX(), this.getY(), this.getZ());

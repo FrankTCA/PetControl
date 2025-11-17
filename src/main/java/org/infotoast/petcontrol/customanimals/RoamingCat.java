@@ -27,6 +27,7 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.phys.AABB;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
@@ -58,7 +59,6 @@ public class RoamingCat extends Cat {
     }
 
     public static RoamingCat convertFromCat(Cat cat, int centerX, int centerZ, int radius, boolean guarded) {
-        PetListener.entityAddLock = true;
         RoamingCat rcat = new RoamingCat(cat.level(),  centerX, centerZ, radius, guarded);
         rcat.setPos(cat.getX(), cat.getY(), cat.getZ());
         ((org.bukkit.entity.Tameable)Bukkit.getEntity(rcat.getUUID())).setOwner(Bukkit.getOfflinePlayer(cat.getOwnerReference().getUUID()));
@@ -81,17 +81,17 @@ public class RoamingCat extends Cat {
         }
         rcat.setCollarColor(cat.getCollarColor());
         rcat.setVariant(cat.getVariant());
+        Entity bEnt = Bukkit.getEntity(rcat.getUUID());
+        assert bEnt != null;
+        PetControl.roamingTeam.addEntity(bEnt);
+        bEnt.addScoreboardTag("roaming");
         PetControl.cacheManager.removeByUUID(cat.getUUID());
         cat.remove(RemovalReason.DISCARDED);
         BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
-        scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> {
-            PetListener.entityAddLock = false;
-        }, 3L);
         return rcat;
     }
 
     public Cat convertToCat() {
-        PetListener.entityAddLock = true;
         Cat cat = new Cat(EntityType.CAT, this.level());
         level().addFreshEntity(cat);
         cat.setPos(this.getX(), this.getY(), this.getZ());
@@ -117,10 +117,6 @@ public class RoamingCat extends Cat {
         cat.setVariant(this.getVariant());
         PetControl.cacheManager.removeByUUID(this.getUUID());
         this.remove(RemovalReason.DISCARDED);
-        BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
-        scheduler.scheduleSyncDelayedTask(PetControl.plugin, () -> {
-            PetListener.entityAddLock = false;
-        }, 3L);
 
         return cat;
     }

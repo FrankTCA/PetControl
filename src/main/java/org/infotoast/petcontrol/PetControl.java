@@ -1,11 +1,14 @@
 package org.infotoast.petcontrol;
 
 import org.bukkit.Location;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.BlockIterator;
 
 import org.infotoast.petcontrol.cachefile.CacheFileManager;
@@ -19,6 +22,8 @@ public final class PetControl extends JavaPlugin {
     public static Logger logger;
     public static CacheFileManager cacheManager;
     public static PetControl plugin;
+    public static ScoreboardManager scoreboardManager;
+    public static Team roamingTeam;
 
     @Override
     public void onEnable() {
@@ -35,6 +40,15 @@ public final class PetControl extends JavaPlugin {
         this.cacheManager = new CacheFileManager(this);
         this.cacheManager.onStartup();
         getServer().getPluginManager().registerEvents(new PetListener(), this);
+        // Create scoreboard team for roaming animals
+        getServer().getScheduler().runTask(this, () -> {
+            scoreboardManager = getServer().getScoreboardManager();
+            if (scoreboardManager.getMainScoreboard().getTeam("roaming") == null) {
+                roamingTeam = scoreboardManager.getMainScoreboard().registerNewTeam("roaming");
+            } else {
+                roamingTeam = scoreboardManager.getMainScoreboard().getTeam("roaming");
+            }
+        });
         getServer().getConsoleSender().sendMessage("§l§bPetControl has been enabled!");
     }
 
