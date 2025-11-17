@@ -21,32 +21,36 @@ public class PetListener implements Listener {
     public void onChunkLoad(ChunkLoadEvent event) {
         for (org.bukkit.entity.Entity entity : event.getChunk().getEntities()) {
             if (entity.getType() != EntityType.CAT && entity.getType() != EntityType.WOLF) continue;
-            if (PetControl.roamingTeam.hasEntity(entity)) {
-                try {
-                    RoamingAnimalEntry ent = PetControl.cacheManager.checkIfRoamingAnimalFromUUID(entity.getUniqueId());
-                    if (ent == null) {
-                        PetControl.logger.warning("Pet named " + entity.getName() + " was in roaming mode but the range info was lost from a bad restart.");
-                        PetControl.logger.warning("The animal will be sitting. Please let the owner know to put the animal back on roaming.");
-                        if (entity instanceof CraftCat) {
-                            ((CraftCat) entity).setSitting(true);
-                        } else if (entity instanceof CraftWolf) {
-                            ((CraftWolf) entity).setSitting(true);
+            if (PetControl.roamingTeam != null) {
+                if (PetControl.roamingTeam.hasEntity(entity)) {
+                    try {
+                        RoamingAnimalEntry ent = PetControl.cacheManager.checkIfRoamingAnimalFromUUID(entity.getUniqueId());
+                        if (ent == null) {
+                            PetControl.logger.warning("Pet named " + entity.getName() + " was in roaming mode but the range info was lost from a bad restart.");
+                            PetControl.logger.warning("The animal will be sitting. Please let the owner know to put the animal back on roaming.");
+                            if (entity instanceof CraftCat) {
+                                ((CraftCat) entity).setSitting(true);
+                            } else if (entity instanceof CraftWolf) {
+                                ((CraftWolf) entity).setSitting(true);
+                            } else {
+                                throw new EntityNotCatOrDogException("Somehow the entity is not a cat or dog? Please report this error to the developers.");
+                            }
                         } else {
-                            throw new EntityNotCatOrDogException("Somehow the entity is not a cat or dog? Please report this error to the developers.");
+                            if (ent.getAnimal().equals(RoamingAnimal.CAT)) {
+                                RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
+                                        ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
+                            } else {
+                                RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
+                                        ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
+                            }
                         }
-                    } else {
-                        if (ent.getAnimal().equals(RoamingAnimal.CAT)) {
-                            RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
-                                    ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                        } else {
-                            RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
-                                    ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                        }
+                    } catch (EntityNotCatOrDogException e) {
+                        PetControl.logger.warning("Error while loading roaming animal " + entity.getUniqueId() + ": " + e.getMessage());
+                        e.printStackTrace();
                     }
-                } catch (EntityNotCatOrDogException e) {
-                    PetControl.logger.warning("Error while loading roaming animal " + entity.getUniqueId() + ": " + e.getMessage());
-                    e.printStackTrace();
                 }
+            } else {
+                PetControl.logger.warning("Chunk loaded before PetControl could create teams. Any roaming animals will follow.");
             }
         }
     }
