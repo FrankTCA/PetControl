@@ -1,0 +1,57 @@
+# PetControl Configuration
+
+# ------------------------
+# <--- Animal Roaming --->
+# ------------------------
+# Enable animal roaming
+animal-roaming: true
+
+# Should animals that roam be guarded from environmental damage?
+# You can create exceptions to this rule by adding the keyword "guarded" in the /roam command
+# This protects animals from fire damage, drowing damage, but not damage from non-environmental sources
+# If animal-roaming is disabled, this setting will be ignored
+animal-roaming-guard: false
+
+# What is the maximum radius for roaming animals? (in blocks)
+# The default center point for this radius is the location of the animal when the /roam command is executed
+# The petcontrol.roam.exceedmaxradius permission can be used to allow players to roam outside of this radius
+# Set this number to -1 to disable the radius limit
+# If animal-roaming is disabled, this setting will be ignored
+animal-roaming-max-radius: 50
+
+# What is the default radius for roaming animals? (in blocks)
+# You can use the petcontrol.roam.radius permission to enable players to set their own roaming radius
+# If players do not have petcontrol.roam.radius, they will be forced to use this default radius
+# That permission is granted to everyone by default
+animal-roaming-default-radius: 30
+
+# ------------------------
+# <---   Saved Data   --->
+# ------------------------
+
+# We need to save data on certain animals to prevent them or their settings from being removed when the server restarts
+# By default, we autosave this data every 600 seconds (10 minutes)
+# Set this to 0 to disable autosaving
+autosave-interval: 600
+
+# ------------------------
+# <---    Language    --->
+# ------------------------
+
+messages:
+  roaming-disabled: "&cAnimal roaming is disabled on this server!"
+  roaming-radius-exceeded: "&cYou cannot have animals roam any further than &e%radius% blocks&c!"
+  roaming-radius-set: "&aAnimal &e%name% roaming radius has been set to &e%radius% blocks&a!"
+  no-permission-others: "&cYou do not have permission to use this command on animals that are not yours!"
+  not-facing-animal: "&cYou must be facing an animal to use this command!"
+  not-facing-tamed: "&cYou must be facing a tamed animal to use this command!"
+  no-permission: "&cYou do not have permission to use this command!"
+  follow-success: "&e%name% &ais reset to normal behavior and will follow and teleport."
+  players-only: "This command can only be used by players!"
+  invalid-usage: "&cInvalid usage!"
+  heal-success: "&e%name% &ais healed!"
+  no-permission-guarded: "&cYou do not have permission to set mobs as guarded."
+  player-unknown: "&cPlayer either does not exist or has not played before."
+  togglesit-success: "&e%name% &ahas been toggled sitting."
+  ownership-transfer: "&eOwnership of &a%name% &ehas been transferred to &a%player%&e."
+  plugin-enable: "&aPetControl has been enabled!"
