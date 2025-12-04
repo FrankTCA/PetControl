@@ -55,3 +55,6 @@ messages:
   togglesit-success: "&e%name% &ahas been toggled sitting."
   ownership-transfer: "&eOwnership of &a%name% &ehas been transferred to &a%player%&e."
   plugin-enable: "&aPetControl has been enabled!"
+
+# Do not edit this line
+config-version: 1
