@@ -1,6 +1,5 @@
 package org.infotoast.petcontrol;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.craftbukkit.entity.CraftCat;
 import org.bukkit.craftbukkit.entity.CraftWolf;
@@ -36,13 +35,7 @@ public class PetListener implements Listener {
                                 throw new EntityNotCatOrDogException("Somehow the entity is not a cat or dog? Please report this error to the developers.");
                             }
                         } else {
-                            if (ent.getAnimal().equals(RoamingAnimal.CAT)) {
-                                RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
-                                        ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                            } else {
-                                RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
-                                        ent.getCenterX(), ent.getCenterZ(), ent.getRadius(), ent.isGuarded());
-                            }
+                            createRoamingAnimalFromCacheEntry(entity, ent);
                         }
                     } catch (EntityNotCatOrDogException e) {
                         PetControl.logger.warning("Error while loading roaming animal " + entity.getUniqueId() + ": " + e.getMessage());
@@ -50,8 +43,33 @@ public class PetListener implements Listener {
                     }
                 }
             } else {
-                PetControl.logger.warning("Chunk loaded before PetControl could create teams. Any roaming animals will follow.");
+                // Is the animal's UUID in the cache?
+                RoamingAnimalEntry ent = PetControl.cacheManager.checkIfRoamingAnimalFromUUID(entity.getUniqueId());
+                if (ent != null) {
+                    // This needs to wait for the scoreboard teams to be created
+                    PetControl.plugin.getServer().getScheduler().runTask(PetControl.plugin, () -> createRoamingAnimalFromCacheEntry(entity, ent));
+                } else {
+                    // Check if animal is tamed and standing
+                    if (entity instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame() && !tamableAnimal.isOrderedToSit()) {
+                        PetControl.logger.warning("Animal name " + tamableAnimal.getName() + " may have been in roaming mode but the range info was lost from a bad restart.");
+                        PetControl.logger.warning("Please let the owner, " + tamableAnimal.getOwner().getName() + ", know to put the animal back on roaming.");
+                        PetControl.logger.warning("Animal will now be sitting.");
+                        tamableAnimal.setOrderedToSit(true);
+                    }
+                }
             }
+        }
+    }
+
+    private void createRoamingAnimalFromCacheEntry(org.bukkit.entity.Entity entity, RoamingAnimalEntry entry) {
+        if (entity instanceof CraftCat && entry.getAnimal().equals(RoamingAnimal.CAT)) {
+            RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
+                    entry.getCenterX(), entry.getCenterZ(), entry.getRadius(), entry.isGuarded());
+        } else if (entity instanceof CraftWolf && entry.getAnimal().equals(RoamingAnimal.DOG)) {
+            RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
+                    entry.getCenterX(), entry.getCenterZ(), entry.getRadius(), entry.isGuarded());
+        } else {
+            throw new EntityNotCatOrDogException("Entity is not a cat or dog. Please report this error to the developers.");
         }
     }
 }
