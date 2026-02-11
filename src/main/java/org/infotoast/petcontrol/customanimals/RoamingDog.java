@@ -135,6 +135,12 @@ public class RoamingDog extends Wolf {
     }
 
     @Override
+    public void setOrderedToSit(boolean orderedToSit) {
+        PetControl.cacheManager.checkIfRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
+        super.setOrderedToSit(orderedToSit);
+    }
+
+    @Override
     public boolean isInvulnerableTo(ServerLevel level, DamageSource damageSource) {
         if (this.guarded) {
             if (damageSource.is(DamageTypeTags.IS_FALL)) {

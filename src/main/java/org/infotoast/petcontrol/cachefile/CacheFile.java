@@ -3,15 +3,16 @@ package org.infotoast.petcontrol.cachefile;
 import java.util.ArrayList;
 
 public class CacheFile {
-    public ArrayList<RoamingAnimalEntry> animals = new ArrayList<>();
-    public void addAnimal(RoamingAnimalEntry animal) {
+    public ArrayList<CacheFileEntry> animals = new ArrayList<>();
+
+    public void addAnimal(CacheFileEntry animal) {
         animals.add(animal);
     }
 
     public byte[] getBytes() {
         ArrayList<byte[]> bytes = new ArrayList<>();
         int length = 0;
-        for (RoamingAnimalEntry animal : animals) {
+        for (RoamingAnimalEntry animal : roamingAnimals) {
             byte[] b = animal.getAsBytes();
             length += b.length;
             bytes.add(b);

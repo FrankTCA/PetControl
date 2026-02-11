@@ -1,6 +1,7 @@
 package org.infotoast.petcontrol.cachefile;
 
-public enum RoamingAnimal {
+public enum AnimalType {
     DOG,
-    CAT
+    CAT,
+    PARROT
 }

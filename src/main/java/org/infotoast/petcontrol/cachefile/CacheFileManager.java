@@ -74,22 +74,22 @@ public class CacheFileManager {
     }
 
     public void addRoamingCat(RoamingCat cat) {
-        RoamingAnimalEntry entry = new RoamingAnimalEntry(RoamingAnimal.CAT,
-                cat.getRoamingRadius(), cat.getRoamingCenterX(), cat.getRoamingCenterZ(), cat.getUUID(), cat.isGuarded());
+        RoamingAnimalEntry entry = new RoamingAnimalEntry(AnimalType.CAT,
+                cat.getRoamingRadius(), cat.getRoamingCenterX(), cat.getRoamingCenterZ(), cat.getUUID(), cat.isGuarded(), cat.isOrderedToSit());
 
         data.addAnimal(entry);
     }
 
     public void addRoamingDog(RoamingDog dog) {
-        RoamingAnimalEntry entry = new RoamingAnimalEntry(RoamingAnimal.DOG,
-                dog.getRoamingRadius(), dog.getRoamingCenterX(), dog.getRoamingCenterZ(), dog.getUUID(), dog.isGuarded());
+        RoamingAnimalEntry entry = new RoamingAnimalEntry(AnimalType.DOG,
+                dog.getRoamingRadius(), dog.getRoamingCenterX(), dog.getRoamingCenterZ(), dog.getUUID(), dog.isGuarded(), dog.isOrderedToSit());
 
         data.addAnimal(entry);
     }
 
     public void removeByUUID(UUID uuid) {
         for (int i = 0; i < data.animals.size(); i++) {
-            RoamingAnimalEntry entry = data.animals.get(i);
+            CacheFileEntry entry = data.animals.get(i);
             if (entry.getUuid().equals(uuid)) {
                 data.animals.remove(i);
             }
@@ -97,9 +97,12 @@ public class CacheFileManager {
     }
 
     public RoamingAnimalEntry checkIfRoamingAnimalFromUUID(UUID uuid) {
-        for (RoamingAnimalEntry ent : data.animals) {
-            if (ent.getUuid().equals(uuid)) {
-                return ent;
+        for (CacheFileEntry ent : data.animals) {
+            if (ent instanceof RoamingAnimalEntry) {
+                RoamingAnimalEntry roamingEnt = (RoamingAnimalEntry) ent;
+                if (roamingEnt.getUuid().equals(uuid)) {
+                    return roamingEnt;
+                }
             }
         }
         return null;

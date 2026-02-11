@@ -4,39 +4,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class RoamingAnimalEntry {
-    private final int animalId;
+public class RoamingAnimalEntry extends CacheFileEntry {
     private final int radius;
     private final int centerX;
     private final int centerZ;
-    private final UUID uuid;
     private final boolean guarded;
-    public RoamingAnimalEntry(RoamingAnimal animal, int radius, int centerX, int centerZ, UUID uuid, boolean guarded) {
-        this.animalId = convertAnimalToId(animal);
+    private boolean sitting;
+    public RoamingAnimalEntry(AnimalType animal, int radius, int centerX, int centerZ, UUID uuid, boolean guarded, boolean sitting) {
+        super(animal, uuid);
         this.radius = radius;
         this.centerX = centerX;
         this.centerZ = centerZ;
-        this.uuid = uuid;
         this.guarded = guarded;
-    }
-
-    private static int convertAnimalToId(RoamingAnimal animal) {
-        return switch (animal) {
-            case DOG -> 0;
-            case CAT -> 1;
-        };
-    }
-
-    private static RoamingAnimal convertIdToAnimal(int id) {
-        return switch (id) {
-            case 0 -> RoamingAnimal.DOG;
-            case 1 -> RoamingAnimal.CAT;
-            default -> throw new IllegalStateException("Unexpected value: " + id);
-        };
-    }
-
-    public RoamingAnimal getAnimal() {
-        return convertIdToAnimal(this.animalId);
+        this.sitting = sitting;
     }
 
     public int getRadius() {
@@ -51,12 +31,16 @@ public class RoamingAnimalEntry {
         return centerZ;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
     public boolean isGuarded() {
         return guarded;
+    }
+
+    public boolean isSitting() {
+        return sitting;
+    }
+
+    public void setSitting(boolean sitting) {
+        this.sitting = sitting;
     }
 
     public byte[] getAsBytes() {
@@ -67,7 +51,7 @@ public class RoamingAnimalEntry {
         byte[] centerZB = CacheFileManager.intToBytes(centerZ);
         byte[] uuidB = this.uuid.toString().getBytes();
         byte uuidLen = (byte)(uuidB.length);
-        int byteCount = 6;
+        int byteCount = 7;
         byteCount += radiusB.length;
         byteCount += centerXB.length;
         byteCount += centerZB.length;
@@ -89,12 +73,32 @@ public class RoamingAnimalEntry {
         for (int i = 0; i < uuidB.length; i++) {
             result[i + 15] = uuidB[i];
         }
-        result[result.length-2] = (byte)((guarded) ? 0x1 : 0x0);
+        result[result.length-3] = (byte)((guarded) ? 0x1 : 0x0);
+        result[result.length-2] = (byte)((sitting) ? 0x1 : 0x0);
         result[result.length-1] = 0xf;
         return result;
     }
 
-    public static RoamingAnimalEntry readBytes(byte[] bytes) {
+    public static CacheFileEntry readBytes(byte[] bytes) {
+        int animalId = bytes[1];
+        byte[] radiusBytes = Arrays.copyOfRange(bytes, 2, 6);
+        int radius = CacheFileManager.bytesToInt(radiusBytes);
+        byte[] centerXBytes = Arrays.copyOfRange(bytes, 6, 10);
+        int centerX = CacheFileManager.bytesToInt(centerXBytes);
+        byte[] centerZBytes = Arrays.copyOfRange(bytes, 10, 14);
+        int centerZ = CacheFileManager.bytesToInt(centerZBytes);
+        int uuidLength = bytes[14];
+        byte[] uuidB = Arrays.copyOfRange(bytes, 15, 15+uuidLength);
+        String uuidStr = new String(uuidB, StandardCharsets.UTF_8);
+        UUID uuid = UUID.fromString(uuidStr);
+        boolean guarded = bytes[bytes.length-3] == 0x1;
+        boolean sitting = bytes[bytes.length-2] == 0x1;
+        AnimalType animal = convertIdToAnimal(animalId);
+        return new RoamingAnimalEntry(animal, radius, centerX, centerZ, uuid, guarded, sitting);
+    }
+
+    // Reads legacy cache files that do not include whether the animal is sitting
+    public static CacheFileEntry readBytesLegacy(byte[] bytes) {
         int animalId = bytes[1];
         byte[] radiusBytes = Arrays.copyOfRange(bytes, 2, 6);
         int radius = CacheFileManager.bytesToInt(radiusBytes);
@@ -107,12 +111,12 @@ public class RoamingAnimalEntry {
         String uuidStr = new String(uuidB, StandardCharsets.UTF_8);
         UUID uuid = UUID.fromString(uuidStr);
         boolean guarded = bytes[bytes.length-2] == 0x1;
-        RoamingAnimal animal = convertIdToAnimal(animalId);
-        return new RoamingAnimalEntry(animal, radius, centerX, centerZ, uuid, guarded);
+        AnimalType animal = convertIdToAnimal(animalId);
+        return new RoamingAnimalEntry(animal, radius, centerX, centerZ, uuid, guarded, true);
     }
 
     @Override
     public String toString() {
-        return "RoamingAnimal " + convertIdToAnimal(animalId) + " center: " + centerX + ", " + centerZ + " radius: " + radius + " uuid: " + uuid + " guarded: " + guarded;
+        return "AnimalType " + convertIdToAnimal(animalId) + " center: " + centerX + ", " + centerZ + " radius: " + radius + " uuid: " + uuid + " guarded: " + guarded;
     }
 }

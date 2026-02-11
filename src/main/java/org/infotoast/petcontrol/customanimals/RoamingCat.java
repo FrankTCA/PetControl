@@ -1,7 +1,6 @@
 package org.infotoast.petcontrol.customanimals;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
@@ -32,12 +31,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
-import org.infotoast.petcontrol.PetListener;
 import org.infotoast.petcontrol.customanimals.goal.RemainWithinRadiusGoal;
 import org.infotoast.petcontrol.customanimals.goal.TameRandomTargetGoal;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RoamingCat extends Cat {
@@ -152,6 +149,12 @@ public class RoamingCat extends Cat {
     @Override
     public boolean shouldTryTeleportToOwner() {
         return false;
+    }
+
+    @Override
+    public void setOrderedToSit(boolean orderedToSit) {
+        PetControl.cacheManager.checkIfRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
+        super.setOrderedToSit(orderedToSit);
     }
 
     @Override

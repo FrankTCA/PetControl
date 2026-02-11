@@ -9,7 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
-import org.infotoast.petcontrol.cachefile.RoamingAnimal;
+import org.infotoast.petcontrol.cachefile.AnimalType;
 import org.infotoast.petcontrol.cachefile.RoamingAnimalEntry;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
@@ -63,10 +63,10 @@ public class PetListener implements Listener {
     }
 
     private void createRoamingAnimalFromCacheEntry(org.bukkit.entity.Entity entity, RoamingAnimalEntry entry) {
-        if (entity instanceof CraftCat && entry.getAnimal().equals(RoamingAnimal.CAT)) {
+        if (entity instanceof CraftCat && entry.getAnimal().equals(AnimalType.CAT)) {
             RoamingCat rcat = RoamingCat.convertFromCat(((CraftCat) entity).getHandle(),
                     entry.getCenterX(), entry.getCenterZ(), entry.getRadius(), entry.isGuarded());
-        } else if (entity instanceof CraftWolf && entry.getAnimal().equals(RoamingAnimal.DOG)) {
+        } else if (entity instanceof CraftWolf && entry.getAnimal().equals(AnimalType.DOG)) {
             RoamingDog rdog = RoamingDog.convertFromWolf(((CraftWolf) entity).getHandle(),
                     entry.getCenterX(), entry.getCenterZ(), entry.getRadius(), entry.isGuarded());
         } else {
