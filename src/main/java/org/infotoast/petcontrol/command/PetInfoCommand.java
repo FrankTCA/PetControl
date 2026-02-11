@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
@@ -36,6 +37,9 @@ public class PetInfoCommand implements CommandExecutor {
                         TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
                         sender.sendMessage("§6§l------------< PET INFO >------------");
                         sender.sendMessage("§6§l| §r§1Entity Type: §r§9" + playerFacing.getType());
+                        if (playerFacing.getName() != null) {
+                            sender.sendMessage("§6§l| §r§1Entity Name: §r§9" + playerFacing.getName());
+                        }
                         sender.sendMessage("§6§l| §r§1Entity UUID: §r§9" + playerFacing.getUniqueId());
                         sender.sendMessage("§6§l| §r§1Health: §r§9" + tamableAnimal.getHealth() + "/" + tamableAnimal.getMaxHealth());
                         String isTame = (tamableAnimal.isTame()) ? "Yes" : "No";
@@ -56,8 +60,19 @@ public class PetInfoCommand implements CommandExecutor {
                         }
                         sender.sendMessage("§6§l------------------------------------");
                         return true;
+                    } else if (PetControl.SUPPORTED_ANIMAL_TYPES.contains(playerFacing.getType().toString()) && playerFacing instanceof Mob) {
+                        // Support for other types of animals that are near-tamable
+                        Mob playerFacingMob = (Mob) playerFacing;
+                        sender.sendMessage("§6§l------------< ANIMAL INFO >------------");
+                        sender.sendMessage("§6§l| §r§1Entity Type: §r§9" + playerFacing.getType());
+                        if (playerFacing.getName() != null) {
+                            sender.sendMessage("§6§l| §r§1Entity Name: §r§9" + playerFacing.getName());
+                        }
+                        sender.sendMessage("§6§l| §r§1Entity UUID: §r§9" + playerFacing.getUniqueId());
+                        sender.sendMessage("§6§l| §r§1Health: §r§9" + playerFacingMob.getHealth() + "/" + playerFacingMob.getMaxHealth());
+                        sender.sendMessage("§6§l---------------------------------------");
                     }
-                    sender.sendMessage("§4This is not a tamable animal!");
+                    sender.sendMessage("§4This is not an animal we support getting info on!");
                     return false;
                 }
                 sender.sendMessage("§4Please face an animal.");

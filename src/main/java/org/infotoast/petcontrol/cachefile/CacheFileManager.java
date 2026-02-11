@@ -106,6 +106,14 @@ public class CacheFileManager {
     }
 
     public void onShutdown() {
+        saveCache();
+    }
+
+    public void saveCache() {
         writeFile();
+    }
+
+    public void onAutoSave() {
+        saveCache();
     }
 }

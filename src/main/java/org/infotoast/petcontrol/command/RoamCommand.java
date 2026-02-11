@@ -1,19 +1,15 @@
 package org.infotoast.petcontrol.command;
 
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.wolf.Wolf;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.metadata.EntityMetadataStore;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
-import org.infotoast.petcontrol.PetListener;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
 

@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.infotoast.petcontrol.cachefile.RoamingAnimal;
 import org.infotoast.petcontrol.cachefile.RoamingAnimalEntry;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
@@ -71,5 +72,10 @@ public class PetListener implements Listener {
         } else {
             throw new EntityNotCatOrDogException("Entity is not a cat or dog. Please report this error to the developers.");
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onWorldSave(WorldSaveEvent evt) {
+        PetControl.cacheManager.onAutoSave();
     }
 }

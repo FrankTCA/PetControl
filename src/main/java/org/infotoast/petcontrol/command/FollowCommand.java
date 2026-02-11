@@ -1,7 +1,7 @@
 package org.infotoast.petcontrol.command;
 
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.wolf.Wolf;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -8,15 +8,16 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.animal.Cat;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.animal.feline.Cat;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
+import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -258,8 +259,7 @@ public class RoamingCat extends Cat {
 
         public void stop() {
             this.cat.setLying(false);
-            float timeOfDay = this.cat.level().getTimeOfDay(1.0F);
-            if (this.ownerPlayer.getSleepTimer() >= 100 && (double)timeOfDay > 0.77 && (double)timeOfDay < 0.8 && (double)this.cat.level().getRandom().nextFloat() < 0.7) {
+            if (this.ownerPlayer.getSleepTimer() >= 100 && this.cat.level().getRandom().nextFloat() < (Float)this.cat.level().environmentAttributes().getValue(EnvironmentAttributes.CAT_WAKING_UP_GIFT_CHANCE, this.cat.position())) {
                 this.giveMorningGift();
             }
 

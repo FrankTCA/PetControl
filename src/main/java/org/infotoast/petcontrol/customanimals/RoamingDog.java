@@ -9,17 +9,15 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Turtle;
-import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.animal.turtle.Turtle;
+import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.animal.wolf.Wolf;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
-import org.infotoast.petcontrol.PetListener;
 import org.infotoast.petcontrol.customanimals.goal.RemainWithinRadiusGoal;
 
 public class RoamingDog extends Wolf {

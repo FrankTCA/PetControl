@@ -25,6 +25,10 @@ public final class PetControl extends JavaPlugin {
     public static ScoreboardManager scoreboardManager;
     public static Team roamingTeam;
 
+    public static final List<String> SUPPORTED_ANIMAL_TYPES =
+            List.of("CAT", "WOLF", "HORSE", "FOX", "PARROT", "RABBIT", "COPPER_GOLEM", "IRON_GOLEM", "SNOW_GOLEM",
+                    "ALLAY", "AXOLOTL", "CAMEL", "DONKEY", "HAPPY_GHAST", "MULE", "STRIDER", "LLAMA", "NAUTILUS");
+
     @Override
     public void onEnable() {
         // Plugin startup logic
