@@ -6,5 +6,6 @@ public interface ICacheFileEntry {
     public AnimalType getAnimalType();
     public UUID getUUID();
     public byte[] getAsBytes();
-    public CacheFileEntry readBytes(byte[] bytes);
+    public EntryType getEntryType();
+    public void setUUID(UUID uuid);
 }

@@ -10,6 +10,8 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
 
@@ -76,11 +78,13 @@ public class RoamCommand implements CommandExecutor {
                                         playerFacing.remove();
                                         RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, guarded);
                                         sender.sendMessage("§bCat is now roaming. UUID: " + rcat.getUUID());
+                                        enableRoamingInCache(tamableAnimal, rcat);
                                         return true;
                                     } else if (tamableAnimal instanceof Wolf) {
                                         playerFacing.remove();
                                         RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, guarded);
                                         sender.sendMessage("§bDog is now roaming. UUID: " + rdog.getUUID());
+                                        enableRoamingInCache(tamableAnimal, rdog);
                                         return true;
                                     }
                                 } else {
@@ -114,5 +118,13 @@ public class RoamCommand implements CommandExecutor {
         }
         sender.sendMessage("§4Unknown error. Please report this on GitHub issues.");
         return false;
+    }
+
+    private void enableRoamingInCache(TamableAnimal oldAnimal, TamableAnimal newAnimal) {
+        TamedAnimalEntry ent = PetControl.cacheManager.getTamedAnimalFromUUID(oldAnimal.getUUID());
+        PetControl.cacheManager.removeByUUID(oldAnimal.getUUID(), EntryType.TAMED);
+        ent.setUUID(newAnimal.getUUID());
+        ent.setRoaming(true);
+        PetControl.cacheManager.addTamedAnimalEntry(ent);
     }
 }

@@ -41,6 +41,7 @@ public final class PetControl extends JavaPlugin {
         getCommand("healpet").setExecutor(new HealPetCommand(this));
         getCommand("roam").setExecutor(new RoamCommand(this));
         getCommand("follow").setExecutor(new FollowCommand(this));
+        getCommand("guard").setExecutor(new GuardCommand(this));
         this.cacheManager = new CacheFileManager(this);
         this.cacheManager.onStartup();
         getServer().getPluginManager().registerEvents(new PetListener(), this);

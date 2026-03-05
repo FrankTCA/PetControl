@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
 import org.infotoast.petcontrol.customanimals.goal.RemainWithinRadiusGoal;
 
 public class RoamingDog extends Wolf {
@@ -64,7 +65,7 @@ public class RoamingDog extends Wolf {
         assert bEnt != null;
         PetControl.roamingTeam.addEntity(bEnt);
         bEnt.addScoreboardTag("roaming");
-        PetControl.cacheManager.removeByUUID(wolf.getUUID());
+        PetControl.cacheManager.removeByUUID(wolf.getUUID(), EntryType.ROAMING);
         wolf.remove(RemovalReason.DISCARDED);
         return rdog;
     }
@@ -93,7 +94,7 @@ public class RoamingDog extends Wolf {
         }
         wolf.setCollarColor(this.getCollarColor());
         wolf.setVariant(this.getVariant());
-        PetControl.cacheManager.removeByUUID(this.getUUID());
+        PetControl.cacheManager.removeByUUID(this.getUUID(), EntryType.ROAMING);
         this.remove(RemovalReason.DISCARDED);
         return wolf;
     }
@@ -136,7 +137,7 @@ public class RoamingDog extends Wolf {
 
     @Override
     public void setOrderedToSit(boolean orderedToSit) {
-        PetControl.cacheManager.checkIfRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
+        PetControl.cacheManager.getRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
         super.setOrderedToSit(orderedToSit);
     }
 

@@ -56,7 +56,7 @@ public class CacheFileLoader {
                         }
                         temp.clear();
 
-                        CacheFileEntry ent = (RoamingAnimalEntry)RoamingAnimalEntry.readBytes(b);
+                        CacheFileEntry ent = RoamingAnimalEntry.readBytesLegacy(b);
                         data.addAnimal(ent);
                     }
                 }

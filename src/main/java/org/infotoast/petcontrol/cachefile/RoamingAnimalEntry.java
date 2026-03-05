@@ -97,6 +97,11 @@ public class RoamingAnimalEntry extends CacheFileEntry {
         return new RoamingAnimalEntry(animal, radius, centerX, centerZ, uuid, guarded, sitting);
     }
 
+    @Override
+    public EntryType getEntryType() {
+        return EntryType.ROAMING;
+    }
+
     // Reads legacy cache files that do not include whether the animal is sitting
     public static CacheFileEntry readBytesLegacy(byte[] bytes) {
         int animalId = bytes[1];

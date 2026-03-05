@@ -31,6 +31,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
 import org.infotoast.petcontrol.customanimals.goal.RemainWithinRadiusGoal;
 import org.infotoast.petcontrol.customanimals.goal.TameRandomTargetGoal;
 
@@ -83,7 +84,7 @@ public class RoamingCat extends Cat {
         assert bEnt != null;
         PetControl.roamingTeam.addEntity(bEnt);
         bEnt.addScoreboardTag("roaming");
-        PetControl.cacheManager.removeByUUID(cat.getUUID());
+        PetControl.cacheManager.removeByUUID(cat.getUUID(), EntryType.ROAMING);
         cat.remove(RemovalReason.DISCARDED);
         BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
         return rcat;
@@ -113,7 +114,7 @@ public class RoamingCat extends Cat {
         }
         cat.setCollarColor(this.getCollarColor());
         cat.setVariant(this.getVariant());
-        PetControl.cacheManager.removeByUUID(this.getUUID());
+        PetControl.cacheManager.removeByUUID(this.getUUID(), EntryType.ROAMING);
         this.remove(RemovalReason.DISCARDED);
 
         return cat;
@@ -153,7 +154,7 @@ public class RoamingCat extends Cat {
 
     @Override
     public void setOrderedToSit(boolean orderedToSit) {
-        PetControl.cacheManager.checkIfRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
+        PetControl.cacheManager.getRoamingAnimalFromUUID(this.uuid).setSitting(orderedToSit);
         super.setOrderedToSit(orderedToSit);
     }
 

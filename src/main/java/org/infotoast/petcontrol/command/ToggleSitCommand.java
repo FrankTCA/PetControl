@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 
 public class ToggleSitCommand implements CommandExecutor {
     private final PetControl plugin;
@@ -30,6 +31,7 @@ public class ToggleSitCommand implements CommandExecutor {
                         TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
                         if (tamableAnimal.isTame()) {
                             tamableAnimal.setOrderedToSit(!tamableAnimal.isOrderedToSit());
+                            PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID()).setSitting(tamableAnimal.isOrderedToSit());
                             sender.sendMessage("§bAnimal sitting toggled.");
                             return true;
                         }

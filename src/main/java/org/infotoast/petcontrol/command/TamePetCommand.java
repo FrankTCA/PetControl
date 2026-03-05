@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 
 import org.bukkit.entity.Tameable;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.AnimalType;
+import org.infotoast.petcontrol.cachefile.CacheFileManager;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 
 public class TamePetCommand implements CommandExecutor {
     private final PetControl plugin;
@@ -54,6 +57,9 @@ public class TamePetCommand implements CommandExecutor {
                             }
                             tamableAnimal.setOwner(newOwner);
                             sender.sendMessage("§bAnimal has been tamed!");
+                            AnimalType animalType = PetControl.cacheManager.getAnimalTypeFromEntity(tamableAnimal);
+                            TamedAnimalEntry tae = new TamedAnimalEntry(animalType, tamableAnimal.getUniqueId(), newOwner.getUniqueId(), tamableAnimal.getName(), newOwner.getName(), true, false, false);
+                            PetControl.cacheManager.addTamedAnimalEntry(tae);
                             return true;
                         }
                         sender.sendMessage("§4Animal is already tamed! Use /transferpetowner instead.");
