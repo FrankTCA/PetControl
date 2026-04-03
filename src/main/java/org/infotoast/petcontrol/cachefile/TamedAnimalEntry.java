@@ -76,7 +76,7 @@ public class TamedAnimalEntry extends CacheFileEntry {
         byte[] nameB = this.name.getBytes();
         byte nameLen = (byte)(nameB.length);
 
-        int byteCount = 9;
+        int byteCount = 10;
         byteCount += uuidLen;
         byteCount += ownerUuidLen;
         byteCount += ownerNameLen;
@@ -91,15 +91,15 @@ public class TamedAnimalEntry extends CacheFileEntry {
         }
         result[3+uuidLen] = ownerUuidLen;
         for (int i = 0; i < ownerUuidLen; i++) {
-            result[i+4+uuidLen] = ownerUuidB[i];
+            result[i+5+uuidLen] = ownerUuidB[i];
         }
-        result[4+uuidLen+ownerUuidLen] = ownerNameLen;
+        result[5+uuidLen+ownerUuidLen] = ownerNameLen;
         for (int i = 0; i < ownerNameLen; i++) {
-            result[i+5+uuidLen+ownerUuidLen] = ownerNameB[i];
+            result[i+7+uuidLen+ownerUuidLen] = ownerNameB[i];
         }
-        result[5+uuidLen+ownerUuidLen+ownerNameLen] = nameLen;
+        result[7+uuidLen+ownerUuidLen+ownerNameLen] = nameLen;
         for (int i = 0; i < nameLen; i++) {
-            result[i+6+uuidLen+ownerUuidLen+ownerNameLen] = nameB[i];
+            result[i+7+uuidLen+ownerUuidLen+ownerNameLen] = nameB[i];
         }
         result[result.length-4] = (byte)(guarded ? 0x1 : 0x0);
         result[result.length-3] = (byte)(sitting ? 0x1 : 0x0);
