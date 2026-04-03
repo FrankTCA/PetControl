@@ -12,7 +12,7 @@ public class CacheFile {
     public byte[] getBytes() {
         ArrayList<byte[]> bytes = new ArrayList<>();
         int length = 0;
-        for (RoamingAnimalEntry animal : roamingAnimals) {
+        for (CacheFileEntry animal : animals) {
             byte[] b = animal.getAsBytes();
             length += b.length;
             bytes.add(b);
