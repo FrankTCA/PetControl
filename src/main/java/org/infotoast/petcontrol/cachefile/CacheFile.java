@@ -11,7 +11,8 @@ public class CacheFile {
 
     public byte[] getBytes() {
         ArrayList<byte[]> bytes = new ArrayList<>();
-        int length = 0;
+        int length = 1;
+        bytes.add(new byte[] {0x2});
         for (CacheFileEntry animal : animals) {
             byte[] b = animal.getAsBytes();
             length += b.length;

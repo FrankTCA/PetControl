@@ -2,9 +2,14 @@ package org.infotoast.petcontrol.command;
 
 import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
+
+import java.util.UUID;
 
 public class GuardCommand implements CommandExecutor {
     private final PetControl plugin;
@@ -18,14 +23,25 @@ public class GuardCommand implements CommandExecutor {
             if (sender.hasPermission("petcontrol.guard")) {
                 Player player = (Player) sender;
                 Entity playerFacing = PetControl.getPlayerFacingEntity(player);
-                if (playerFacing != null) {
-                    TamableAnimal tamableAnimal = (TamableAnimal) playerFacing;
-                    if (tamableAnimal.isTame()) {
-                        boolean isGuarded = PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID()).isGuarded();
-                        PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID()).setGuarded(!isGuarded);
-                        String guardStatus = (!isGuarded) ? "on" : "off";
-                        sender.sendMessage("§bGuard status toggled §a§l" + guardStatus + " §r§bfor §l§a" + tamableAnimal.getName());
-                        return true;
+                if (playerFacing != null && playerFacing instanceof Tameable) {
+                    Tameable tameable = (Tameable) playerFacing;
+                    if (tameable.isTamed()) {
+                        CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
+                        net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
+                        TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
+                        TamedAnimalEntry entry = PetControl.cacheManager.getTamedAnimalFromUUID(tameable.getUniqueId());
+                        if (entry == null) {
+                            boolean isGuarded = false;
+                            PetControl.cacheManager.addTamedAnimalEntry(new TamedAnimalEntry(PetControl.cacheManager.getAnimalTypeFromEntity(tameable), tameable.getUniqueId(), UUID.randomUUID(), tameable.getName(), player.getName(), tamableAnimal.isOrderedToSit(), true, false));
+                            sender.sendMessage("§bGuarding is now §a§lon§r§b for §l§a" + tameable.getName());
+                            return true;
+                        } else {
+                            boolean isGuarded = PetControl.cacheManager.getTamedAnimalFromUUID(tameable.getUniqueId()).isGuarded();
+                            PetControl.cacheManager.getTamedAnimalFromUUID(tameable.getUniqueId()).setGuarded(!isGuarded);
+                            String guardStatus = (!isGuarded) ? "on" : "off";
+                            sender.sendMessage("§bGuarding toggled §a§l" + guardStatus + " §r§bfor §l§a" + tameable.getName());
+                            return true;
+                        }
                     } else {
                         sender.sendMessage("§cThis animal is not tamed.");
                         return false;
