@@ -43,6 +43,10 @@ commands:
     description: Selects a pet to be managed by the player, even when they're not looking.
     permission: petcontrol.pselect
     usage: "/pselect [--name|--uuid] <name/uuid>"
+  pettp:
+    description: Teleports you to pet. Use "from" at end to teleport pet to you.
+    permission: petcontrol.pettp
+    usage: "/pettp <pet name|SELECTED> [to|from]"
 
 permissions:
   petcontrol.petinfo:
@@ -80,4 +84,10 @@ permissions:
     default: op
   petcontrol.guard:
     description: Allows you to use /guard
+    default: op
+  petcontrol.pselect:
+    description: Allows you to use /pselect
+    default: true
+  petcontrol.pettp:
+    description: Allows you to use /pettp
     default: op

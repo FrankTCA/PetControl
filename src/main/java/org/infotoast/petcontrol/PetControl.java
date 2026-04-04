@@ -54,6 +54,7 @@ public final class PetControl extends JavaPlugin {
         getCommand("follow").setExecutor(new FollowCommand(this));
         getCommand("guard").setExecutor(new GuardCommand(this));
         getCommand("pselect").setExecutor(new PSelectCommand(this));
+        getCommand("pettp").setExecutor(new PetTpCommand(this));
         this.cacheManager = new CacheFileManager(this);
         this.cacheManager.onStartup();
         // Start tracking pets sitting/standing
