@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 import org.bukkit.entity.Tameable;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -37,6 +39,11 @@ public class TransferPetOwnerCommand implements CommandExecutor {
                                 String nextOwnerName = args[0];
                                 OfflinePlayer newOwner = Bukkit.getOfflinePlayer(nextOwnerName);
                                 tamableAnimal.setOwner(newOwner);
+                                TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUniqueId());
+                                PetControl.cacheManager.removeByUUID(tamableAnimal.getUniqueId(), EntryType.TAMED);
+                                tae.setOwnerUUID(newOwner.getUniqueId());
+                                tae.setOwnerName(newOwner.getName());
+                                PetControl.cacheManager.addTamedAnimalEntry(tae);
                                 sender.sendMessage("§bLast Owner: " + lastOwnerName);
                                 sender.sendMessage("§bNew Owner: " + nextOwnerName);
                                 sender.sendMessage("§5Ownership successfully transferred!");

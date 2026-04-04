@@ -1,7 +1,6 @@
 package org.infotoast.petcontrol.customanimals;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
@@ -32,12 +31,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.infotoast.petcontrol.PetControl;
-import org.infotoast.petcontrol.PetListener;
+import org.infotoast.petcontrol.cachefile.EntryType;
 import org.infotoast.petcontrol.customanimals.goal.RemainWithinRadiusGoal;
 import org.infotoast.petcontrol.customanimals.goal.TameRandomTargetGoal;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 public class RoamingCat extends Cat {
@@ -86,7 +84,7 @@ public class RoamingCat extends Cat {
         assert bEnt != null;
         PetControl.roamingTeam.addEntity(bEnt);
         bEnt.addScoreboardTag("roaming");
-        PetControl.cacheManager.removeByUUID(cat.getUUID());
+        PetControl.cacheManager.removeByUUID(cat.getUUID(), EntryType.ROAMING);
         cat.remove(RemovalReason.DISCARDED);
         BukkitScheduler scheduler = PetControl.plugin.getServer().getScheduler();
         return rcat;
@@ -116,7 +114,7 @@ public class RoamingCat extends Cat {
         }
         cat.setCollarColor(this.getCollarColor());
         cat.setVariant(this.getVariant());
-        PetControl.cacheManager.removeByUUID(this.getUUID());
+        PetControl.cacheManager.removeByUUID(this.getUUID(), EntryType.ROAMING);
         this.remove(RemovalReason.DISCARDED);
 
         return cat;

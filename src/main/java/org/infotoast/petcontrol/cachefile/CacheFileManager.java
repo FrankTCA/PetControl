@@ -3,7 +3,9 @@ package org.infotoast.petcontrol.cachefile;
 import org.infotoast.petcontrol.PetControl;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
+import org.infotoast.petcontrol.exception.EntityNotTamableException;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.UUID;
 
@@ -74,35 +76,68 @@ public class CacheFileManager {
     }
 
     public void addRoamingCat(RoamingCat cat) {
-        RoamingAnimalEntry entry = new RoamingAnimalEntry(RoamingAnimal.CAT,
-                cat.getRoamingRadius(), cat.getRoamingCenterX(), cat.getRoamingCenterZ(), cat.getUUID(), cat.isGuarded());
+        RoamingAnimalEntry entry = new RoamingAnimalEntry(AnimalType.CAT,
+                cat.getRoamingRadius(), cat.getRoamingCenterX(), cat.getRoamingCenterZ(), cat.getUUID(), cat.isGuarded(), cat.isOrderedToSit());
 
         data.addAnimal(entry);
     }
 
     public void addRoamingDog(RoamingDog dog) {
-        RoamingAnimalEntry entry = new RoamingAnimalEntry(RoamingAnimal.DOG,
-                dog.getRoamingRadius(), dog.getRoamingCenterX(), dog.getRoamingCenterZ(), dog.getUUID(), dog.isGuarded());
+        RoamingAnimalEntry entry = new RoamingAnimalEntry(AnimalType.DOG,
+                dog.getRoamingRadius(), dog.getRoamingCenterX(), dog.getRoamingCenterZ(), dog.getUUID(), dog.isGuarded(), dog.isOrderedToSit());
 
         data.addAnimal(entry);
     }
 
-    public void removeByUUID(UUID uuid) {
+    public void removeByUUID(UUID uuid, EntryType entType) {
         for (int i = 0; i < data.animals.size(); i++) {
-            RoamingAnimalEntry entry = data.animals.get(i);
-            if (entry.getUuid().equals(uuid)) {
+            CacheFileEntry entry = data.animals.get(i);
+            if (entry.getUUID().equals(uuid) && entry.getEntryType() == entType) {
                 data.animals.remove(i);
             }
         }
     }
 
-    public RoamingAnimalEntry checkIfRoamingAnimalFromUUID(UUID uuid) {
-        for (RoamingAnimalEntry ent : data.animals) {
-            if (ent.getUuid().equals(uuid)) {
-                return ent;
+    public AnimalType getAnimalTypeFromEntity(org.bukkit.entity.Entity entity) {
+        if (entity instanceof org.bukkit.entity.Cat) {
+            return AnimalType.CAT;
+        } else if (entity instanceof org.bukkit.entity.Wolf) {
+            return AnimalType.DOG;
+        } else if (entity instanceof org.bukkit.entity.Parrot) {
+            return AnimalType.PARROT;
+        } else if (entity instanceof org.bukkit.entity.Nautilus) {
+            return AnimalType.NAUTILUS;
+        } else if (entity instanceof org.bukkit.entity.ZombieNautilus) {
+            return AnimalType.ZOMBIE_NAUTILUS;
+        } else {
+            throw new EntityNotTamableException("Entity is not a tamable animal. Please report this error to the developers.");
+        }
+    }
+
+    public RoamingAnimalEntry getRoamingAnimalFromUUID(UUID uuid) {
+        for (CacheFileEntry ent : data.animals) {
+            if (ent.getUUID().equals(uuid)) {
+                if (ent.getEntryType() == EntryType.ROAMING) {
+                    return (RoamingAnimalEntry) ent;
+                }
             }
         }
         return null;
+    }
+
+    public TamedAnimalEntry getTamedAnimalFromUUID(UUID uuid) {
+        for (CacheFileEntry ent : data.animals) {
+            if (ent.getUUID().equals(uuid)) {
+                if (ent.getEntryType() == EntryType.TAMED) {
+                    return (TamedAnimalEntry) ent;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void addTamedAnimalEntry(TamedAnimalEntry entry) {
+        data.addAnimal(entry);
     }
 
     public void onShutdown() {

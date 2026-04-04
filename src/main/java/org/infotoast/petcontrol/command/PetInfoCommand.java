@@ -11,6 +11,9 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
+import org.infotoast.petcontrol.cachefile.RoamingAnimalEntry;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
 
@@ -47,14 +50,38 @@ public class PetInfoCommand implements CommandExecutor {
                         if (tamableAnimal.isTame()) {
                             UUID ownerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
                             if (ownerUUID != null) {
+                                TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(playerFacing.getUniqueId());
+                                RoamingAnimalEntry rae = PetControl.cacheManager.getRoamingAnimalFromUUID(playerFacing.getUniqueId());
+                                boolean roaming = false;
+                                int roamingRadius;
+                                int roamingCenterX;
+                                int roamingCenterZ;
+                                if (rae != null)
+                                    roaming = true;
+                                if (tae == null) {
+                                    tae = new TamedAnimalEntry(PetControl.cacheManager.getAnimalTypeFromEntity(playerFacing), playerFacing.getUniqueId(), ownerUUID, playerFacing.getName(), player.getName(), tamableAnimal.isOrderedToSit(), false, roaming);
+                                    PetControl.cacheManager.addTamedAnimalEntry(tae);
+                                } else {
+                                    tae = new TamedAnimalEntry(PetControl.cacheManager.getAnimalTypeFromEntity(playerFacing), playerFacing.getUniqueId(), ownerUUID, playerFacing.getName(), player.getName(), tamableAnimal.isOrderedToSit(), tae.isGuarded(), roaming);
+                                    PetControl.cacheManager.removeByUUID(tae.getUUID(), EntryType.TAMED);
+                                    PetControl.cacheManager.addTamedAnimalEntry(tae);
+                                }
                                 String ownerName = Bukkit.getOfflinePlayer(ownerUUID).getName();
                                 sender.sendMessage("§6§l| §r§1Owner: §r§9" + ownerName);
                                 String isSitting = (tamableAnimal.isInSittingPose()) ? "Yes" : "No";
                                 sender.sendMessage("§6§l| §r§1Sitting: §r§9" + isSitting);
-                                if (tamableAnimal instanceof RoamingCat || tamableAnimal instanceof RoamingDog) {
+                                if (roaming) {
+                                    roamingRadius = rae.getRadius();
+                                    roamingCenterX = rae.getCenterX();
+                                    roamingCenterZ = rae.getCenterZ();
                                     sender.sendMessage("§6§l| §r§1Roaming: §r§9Yes");
+                                    sender.sendMessage("§6§l| §r§1Roaming Radius: §r§9" + roamingRadius);
+                                    sender.sendMessage("§6§l| §r§1Roaming Center: §r§9" + roamingCenterX + ", " + roamingCenterZ);
                                 } else {
                                     sender.sendMessage("§6§l| §r§1Roaming: §r§9No");
+                                }
+                                if (tae != null) {
+                                    sender.sendMessage("§6§l| §r§1Guarded: §r§9" + (tae.isGuarded() ? "Yes" : "No"));
                                 }
                             }
                         }

@@ -10,6 +10,8 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.infotoast.petcontrol.PetControl;
+import org.infotoast.petcontrol.cachefile.EntryType;
+import org.infotoast.petcontrol.cachefile.TamedAnimalEntry;
 import org.infotoast.petcontrol.customanimals.RoamingCat;
 import org.infotoast.petcontrol.customanimals.RoamingDog;
 
@@ -49,38 +51,18 @@ public class RoamCommand implements CommandExecutor {
                                     z = tamableAnimal.getBlockZ();
                                 }
 
-                                boolean guarded = false;
-                                // Get guarded
-                                if (args.length == 4) {
-                                    if (args[3].equalsIgnoreCase("guarded")) {
-                                        if (sender.hasPermission("petcontrol.roam.guarded")) {
-                                            guarded = true;
-                                        } else {
-                                            sender.sendMessage("§4You do not have permission to set mobs as guarded. Defaulting to unguarded.");
-                                        }
-                                    }
-                                }
-
-                                if (args.length == 2) {
-                                    if (args[1].equalsIgnoreCase("guarded")) {
-                                        if  (sender.hasPermission("petcontrol.roam.guarded")) {
-                                            guarded = true;
-                                        } else {
-                                            sender.sendMessage("§4You do not have permission to set mobs as guarded. Defaulting to unguarded.");
-                                        }
-                                    }
-                                }
-
                                 if (ownerUUID.equals(player.getUniqueId()) || sender.hasPermission("petcontrol.roam.others")) {
                                     if (tamableAnimal instanceof Cat) {
                                         playerFacing.remove();
-                                        RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, guarded);
+                                        RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, false);
                                         sender.sendMessage("§bCat is now roaming. UUID: " + rcat.getUUID());
+                                        enableRoamingInCache(tamableAnimal, rcat);
                                         return true;
                                     } else if (tamableAnimal instanceof Wolf) {
                                         playerFacing.remove();
-                                        RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, guarded);
+                                        RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, false);
                                         sender.sendMessage("§bDog is now roaming. UUID: " + rdog.getUUID());
+                                        enableRoamingInCache(tamableAnimal, rdog);
                                         return true;
                                     }
                                 } else {
@@ -114,5 +96,13 @@ public class RoamCommand implements CommandExecutor {
         }
         sender.sendMessage("§4Unknown error. Please report this on GitHub issues.");
         return false;
+    }
+
+    private void enableRoamingInCache(TamableAnimal oldAnimal, TamableAnimal newAnimal) {
+        TamedAnimalEntry ent = PetControl.cacheManager.getTamedAnimalFromUUID(oldAnimal.getUUID());
+        PetControl.cacheManager.removeByUUID(oldAnimal.getUUID(), EntryType.TAMED);
+        ent.setUUID(newAnimal.getUUID());
+        ent.setRoaming(true);
+        PetControl.cacheManager.addTamedAnimalEntry(ent);
     }
 }
