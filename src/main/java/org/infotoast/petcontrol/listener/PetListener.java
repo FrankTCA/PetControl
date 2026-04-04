@@ -120,44 +120,6 @@ public class PetListener implements Listener {
         }
     }
 
-    /*@EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent evt) {
-        org.bukkit.entity.Entity entity = evt.getRightClicked();
-        if (evt.getRightClicked() instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame()) {
-            TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID());
-            PetControl.cacheManager.removeByUUID(tamableAnimal.getUUID(), EntryType.TAMED);
-            if (tae == null) {
-                PetControl.logger.warning("Tamed animal entry on right click not found for UUID: " + tamableAnimal.getUUID());
-                PetControl.logger.warning("Ignore this error if you just updated.");
-                UUID ownerUUID = tamableAnimal.getOwnerReference().getUUID();
-                AnimalType animalType = PetControl.cacheManager.getAnimalTypeFromEntity(entity);
-                tae = new TamedAnimalEntry(animalType, entity.getUniqueId(), ownerUUID, entity.getName(), Bukkit.getOfflinePlayer(ownerUUID).getName(), tamableAnimal.isOrderedToSit(), false, false);
-            }
-            tae.setSitting(tamableAnimal.isOrderedToSit());
-            PetControl.cacheManager.addTamedAnimalEntry(tae);
-        }
-    }*/
-
-    /*@EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityPoseChange(EntityPoseChangeEvent evt) {
-        System.out.println("Entity pose change event triggered for entity: " + evt.getEntity().getUniqueId());
-        if (((CraftEntity)evt.getEntity()).getHandleRaw() instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame()) {
-            TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID());
-            boolean isSitting = PetControl.isAnimalSitting(evt.getEntity());
-            System.out.println("Entity pose change event triggered for tamed animal: " + tamableAnimal.getUUID() + " isSitting: " + isSitting);
-            if (tae != null) {
-                tae.setSitting(isSitting);
-                PetControl.cacheManager.removeByUUID(tamableAnimal.getUUID(), EntryType.TAMED);
-                PetControl.cacheManager.addTamedAnimalEntry(tae);
-            } else {
-                RoamingAnimalEntry rae = PetControl.cacheManager.getRoamingAnimalFromUUID(evt.getEntity().getUniqueId());
-                boolean isRoaming = (rae != null);
-                tae = new TamedAnimalEntry(PetControl.cacheManager.getAnimalTypeFromEntity(evt.getEntity()), evt.getEntity().getUniqueId(), tamableAnimal.getOwnerReference().getUUID(), evt.getEntity().getName(), Bukkit.getOfflinePlayer(tamableAnimal.getOwnerReference().getUUID()).getName(), isSitting, false, isRoaming);
-                PetControl.cacheManager.addTamedAnimalEntry(tae);
-            }
-        }
-    }*/
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPetSitOrStandEvent(PetSitOrStandEvent evt) {
         TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(evt.getEntity().getUniqueId());
@@ -184,12 +146,9 @@ public class PetListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamage(org.bukkit.event.entity.EntityDamageEvent evt) {
-        System.out.println("Entity damage event triggered for entity: " + evt.getEntity().getUniqueId());
         if (((CraftEntity)evt.getEntity()).getHandleRaw() instanceof TamableAnimal tamableAnimal && tamableAnimal.isTame()) {
-            System.out.println("Entity damage event triggered for tamed animal: " + tamableAnimal.getUUID());
             TamedAnimalEntry tae = PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID());
             if (tae != null) {
-                System.out.println("Tamed animal entry found for UUID: " + tamableAnimal.getUUID() + "Guarded: " + tae.isGuarded());
                 if (tae.isGuarded()) {
                     evt.setCancelled(true);
                 }

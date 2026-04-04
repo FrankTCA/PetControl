@@ -111,13 +111,11 @@ public class TamedAnimalEntry extends CacheFileEntry {
     public static CacheFileEntry readBytes(byte[] bytes) {
         int animalId = bytes[1];
         AnimalType animalType = CacheFileEntry.convertIdToAnimal(animalId);
-        System.out.println("Animal Type: " + animalId);
         int uuidLength = bytes[2];
         byte[] uuidB = new byte[uuidLength];
         for (int i = 0; i < uuidLength; i++) {
             uuidB[i] = bytes[i+3];
         }
-        System.out.println("Animal UUID: " + new String(uuidB));
         String uuidStr = new String(uuidB);
         UUID uuid = UUID.fromString(uuidStr);
         int ownerUuidLength = bytes[3+uuidLength];
@@ -125,7 +123,6 @@ public class TamedAnimalEntry extends CacheFileEntry {
         for (int i = 0; i < ownerUuidLength; i++) {
             ownerUuidB[i] = bytes[i+4+uuidLength];
         }
-        System.out.println("Owner UUID: " + new String(ownerUuidB));
         String ownerUuidStr = new String(ownerUuidB);
         UUID ownerUuid = UUID.fromString(ownerUuidStr);
         int ownerNameLength = bytes[4+uuidLength+ownerUuidLength];
@@ -133,19 +130,16 @@ public class TamedAnimalEntry extends CacheFileEntry {
         for (int i = 0; i < ownerNameLength; i++) {
             ownerNameB[i] = bytes[i+5+uuidLength+ownerUuidLength];
         }
-        System.out.println("Owner Name: " + new String(ownerNameB));
         String ownerName = new String(ownerNameB);
         int nameLength = bytes[5+uuidLength+ownerUuidLength+ownerNameLength];
         byte[] nameB = new byte[nameLength];
         for (int i = 0; i < nameLength; i++) {
             nameB[i] = bytes[i+6+uuidLength+ownerUuidLength+ownerNameLength];
         }
-        System.out.println("Animal Name: " + new String(nameB));
         String name = new String(nameB);
         boolean guarded = bytes[bytes.length-4] == 0x1;
         boolean sitting = bytes[bytes.length-3] == 0x1;
         boolean roaming = bytes[bytes.length-2] == 0x1;
-        System.out.println("Guarded: " + guarded + ", Sitting: " + sitting + ", Roaming: " + roaming);
         return new TamedAnimalEntry(animalType, uuid, ownerUuid, name, ownerName, sitting, guarded, roaming);
     }
 
