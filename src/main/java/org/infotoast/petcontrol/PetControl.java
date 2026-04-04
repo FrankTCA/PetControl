@@ -1,8 +1,10 @@
 package org.infotoast.petcontrol;
 
+import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.Location;
 
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,6 +15,8 @@ import org.bukkit.util.BlockIterator;
 
 import org.infotoast.petcontrol.cachefile.CacheFileManager;
 import org.infotoast.petcontrol.command.*;
+import org.infotoast.petcontrol.listener.PetListener;
+import org.infotoast.petcontrol.listener.PetSitOrStandTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,7 @@ public final class PetControl extends JavaPlugin {
     public static PetControl plugin;
     public static ScoreboardManager scoreboardManager;
     public static Team roamingTeam;
+    private PetSitOrStandTracker petSitOrStandTracker;
 
     public static final List<String> SUPPORTED_ANIMAL_TYPES =
             List.of("CAT", "WOLF", "HORSE", "FOX", "PARROT", "RABBIT", "COPPER_GOLEM", "IRON_GOLEM", "SNOW_GOLEM",
@@ -44,6 +49,9 @@ public final class PetControl extends JavaPlugin {
         getCommand("guard").setExecutor(new GuardCommand(this));
         this.cacheManager = new CacheFileManager(this);
         this.cacheManager.onStartup();
+        // Start tracking pets sitting/standing
+        petSitOrStandTracker = new PetSitOrStandTracker(this);
+        petSitOrStandTracker.start();
         getServer().getPluginManager().registerEvents(new PetListener(), this);
         // Create scoreboard team for roaming animals
         getServer().getScheduler().runTask(this, () -> {
@@ -61,6 +69,7 @@ public final class PetControl extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         cacheManager.onShutdown();
+        petSitOrStandTracker.stop();
         getServer().getConsoleSender().sendMessage("§l§bPetControl disabled.");
     }
 
@@ -98,5 +107,13 @@ public final class PetControl extends JavaPlugin {
         }
 
         return target;
+    }
+
+    public static boolean isAnimalSitting(Entity entity) {
+        if (((CraftEntity)entity).getHandleRaw() instanceof TamableAnimal tamableAnimal) {
+            return tamableAnimal.isOrderedToSit();
+        }
+        logger.warning("isAnimalSitting called with non-TamableAnimal entity: " + entity.getType() + "with UUID " + entity.getUniqueId());
+        return false;
     }
 }

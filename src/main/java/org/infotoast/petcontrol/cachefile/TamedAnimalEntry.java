@@ -91,15 +91,15 @@ public class TamedAnimalEntry extends CacheFileEntry {
         }
         result[3+uuidLen] = ownerUuidLen;
         for (int i = 0; i < ownerUuidLen; i++) {
-            result[i+5+uuidLen] = ownerUuidB[i];
+            result[i+4+uuidLen] = ownerUuidB[i];
         }
-        result[5+uuidLen+ownerUuidLen] = ownerNameLen;
+        result[4+uuidLen+ownerUuidLen] = ownerNameLen;
         for (int i = 0; i < ownerNameLen; i++) {
-            result[i+7+uuidLen+ownerUuidLen] = ownerNameB[i];
+            result[i+5+uuidLen+ownerUuidLen] = ownerNameB[i];
         }
-        result[7+uuidLen+ownerUuidLen+ownerNameLen] = nameLen;
+        result[5+uuidLen+ownerUuidLen+ownerNameLen] = nameLen;
         for (int i = 0; i < nameLen; i++) {
-            result[i+7+uuidLen+ownerUuidLen+ownerNameLen] = nameB[i];
+            result[i+6+uuidLen+ownerUuidLen+ownerNameLen] = nameB[i];
         }
         result[result.length-4] = (byte)(guarded ? 0x1 : 0x0);
         result[result.length-3] = (byte)(sitting ? 0x1 : 0x0);
@@ -111,11 +111,13 @@ public class TamedAnimalEntry extends CacheFileEntry {
     public static CacheFileEntry readBytes(byte[] bytes) {
         int animalId = bytes[1];
         AnimalType animalType = CacheFileEntry.convertIdToAnimal(animalId);
+        System.out.println("Animal Type: " + animalId);
         int uuidLength = bytes[2];
         byte[] uuidB = new byte[uuidLength];
         for (int i = 0; i < uuidLength; i++) {
             uuidB[i] = bytes[i+3];
         }
+        System.out.println("Animal UUID: " + new String(uuidB));
         String uuidStr = new String(uuidB);
         UUID uuid = UUID.fromString(uuidStr);
         int ownerUuidLength = bytes[3+uuidLength];
@@ -123,6 +125,7 @@ public class TamedAnimalEntry extends CacheFileEntry {
         for (int i = 0; i < ownerUuidLength; i++) {
             ownerUuidB[i] = bytes[i+4+uuidLength];
         }
+        System.out.println("Owner UUID: " + new String(ownerUuidB));
         String ownerUuidStr = new String(ownerUuidB);
         UUID ownerUuid = UUID.fromString(ownerUuidStr);
         int ownerNameLength = bytes[4+uuidLength+ownerUuidLength];
@@ -130,16 +133,19 @@ public class TamedAnimalEntry extends CacheFileEntry {
         for (int i = 0; i < ownerNameLength; i++) {
             ownerNameB[i] = bytes[i+5+uuidLength+ownerUuidLength];
         }
+        System.out.println("Owner Name: " + new String(ownerNameB));
         String ownerName = new String(ownerNameB);
         int nameLength = bytes[5+uuidLength+ownerUuidLength+ownerNameLength];
         byte[] nameB = new byte[nameLength];
         for (int i = 0; i < nameLength; i++) {
             nameB[i] = bytes[i+6+uuidLength+ownerUuidLength+ownerNameLength];
         }
+        System.out.println("Animal Name: " + new String(nameB));
         String name = new String(nameB);
         boolean guarded = bytes[bytes.length-4] == 0x1;
         boolean sitting = bytes[bytes.length-3] == 0x1;
         boolean roaming = bytes[bytes.length-2] == 0x1;
+        System.out.println("Guarded: " + guarded + ", Sitting: " + sitting + ", Roaming: " + roaming);
         return new TamedAnimalEntry(animalType, uuid, ownerUuid, name, ownerName, sitting, guarded, roaming);
     }
 
