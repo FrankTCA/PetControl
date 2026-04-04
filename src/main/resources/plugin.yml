@@ -39,6 +39,10 @@ commands:
     description: Toggles whether an animal is guarded
     permission: petcontrol.guard
     usage: "/guard"
+  pselect:
+    description: Selects a pet to be managed by the player, even when they're not looking.
+    permission: petcontrol.pselect
+    usage: "/pselect [--name|--uuid] <name/uuid>"
 
 permissions:
   petcontrol.petinfo:

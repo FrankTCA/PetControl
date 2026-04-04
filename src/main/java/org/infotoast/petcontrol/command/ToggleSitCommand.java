@@ -20,32 +20,27 @@ public class ToggleSitCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            if (sender.hasPermission("petcontrol.togglesit")) {
-                Player player = (Player) sender;
-                Entity playerFacing = PetControl.getPlayerFacingEntity(player);
-                if (playerFacing != null) {
-                    CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
-                    net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
-                    if (animalFacing instanceof TamableAnimal) {
-                        TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
-                        if (tamableAnimal.isTame()) {
-                            tamableAnimal.setOrderedToSit(!tamableAnimal.isOrderedToSit());
-                            PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID()).setSitting(tamableAnimal.isOrderedToSit());
-                            sender.sendMessage("§bAnimal sitting toggled.");
-                            return true;
-                        }
-                        sender.sendMessage("§4Animal must be tamed!");
-                        return false;
+        if (sender.hasPermission("petcontrol.togglesit")) {
+            Entity playerFacing = PetControl.getPlayerFacingEntity(sender);
+            if (playerFacing != null) {
+                CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
+                net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
+                if (animalFacing instanceof TamableAnimal) {
+                    TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
+                    if (tamableAnimal.isTame()) {
+                        tamableAnimal.setOrderedToSit(!tamableAnimal.isOrderedToSit());
+                        PetControl.cacheManager.getTamedAnimalFromUUID(tamableAnimal.getUUID()).setSitting(tamableAnimal.isOrderedToSit());
+                        sender.sendMessage("§bAnimal sitting toggled.");
+                        return true;
                     }
+                    sender.sendMessage("§4Animal must be tamed!");
+                    return false;
                 }
-                sender.sendMessage("§4You must face a tamed animal!");
-                return false;
             }
-            sender.sendMessage("§4Access denied.");
-            return true;
+            sender.sendMessage("§4You must face a tamed animal!");
+            return false;
         }
-        sender.sendMessage("§4This command must be sent by a player!");
-        return false;
+        sender.sendMessage("§4Access denied.");
+        return true;
     }
 }

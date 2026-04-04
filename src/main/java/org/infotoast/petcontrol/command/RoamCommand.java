@@ -27,75 +27,66 @@ public class RoamCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            if (sender.hasPermission("petcontrol.roam")) {
-                Player player = (Player) sender;
-                Entity playerFacing = PetControl.getPlayerFacingEntity(player);
-                if (playerFacing != null) {
-                    CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
-                    net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
-                    if (animalFacing instanceof TamableAnimal) {
-                        TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
-                        if (tamableAnimal.isTame()) {
-                            UUID ownerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
-                            if (args.length >= 1) {
-                                // Get coordinates
-                                int x;
-                                int z;
-                                int radius = Integer.parseInt(args[0]);
-                                if (args.length >= 3) {
-                                    x = Integer.parseInt(args[1]);
-                                    z = Integer.parseInt(args[2]);
-                                } else {
-                                    x = tamableAnimal.getBlockX();
-                                    z = tamableAnimal.getBlockZ();
-                                }
+        if (sender.hasPermission("petcontrol.roam")) {
+            Entity playerFacing = PetControl.getPlayerFacingEntity(sender);
+            if (playerFacing != null) {
+                CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
+                net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
+                if (animalFacing instanceof TamableAnimal) {
+                    TamableAnimal tamableAnimal = (TamableAnimal) animalFacing;
+                    if (tamableAnimal.isTame()) {
+                        UUID ownerUUID = Objects.requireNonNull(tamableAnimal.getOwnerReference()).getUUID();
+                        if (args.length >= 1) {
+                            // Get coordinates
+                            int x;
+                            int z;
+                            int radius = Integer.parseInt(args[0]);
+                            if (args.length >= 3) {
+                                x = Integer.parseInt(args[1]);
+                                z = Integer.parseInt(args[2]);
+                            } else {
+                                x = tamableAnimal.getBlockX();
+                                z = tamableAnimal.getBlockZ();
+                            }
 
-                                if (ownerUUID.equals(player.getUniqueId()) || sender.hasPermission("petcontrol.roam.others")) {
-                                    if (tamableAnimal instanceof Cat) {
-                                        playerFacing.remove();
-                                        RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, false);
-                                        sender.sendMessage("§bCat is now roaming. UUID: " + rcat.getUUID());
-                                        enableRoamingInCache(tamableAnimal, rcat);
-                                        return true;
-                                    } else if (tamableAnimal instanceof Wolf) {
-                                        playerFacing.remove();
-                                        RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, false);
-                                        sender.sendMessage("§bDog is now roaming. UUID: " + rdog.getUUID());
-                                        enableRoamingInCache(tamableAnimal, rdog);
-                                        return true;
-                                    }
-                                } else {
-                                    sender.sendMessage("§4You do not have permission to make other player's animals roam.");
-                                    return false;
+                            if ((sender instanceof Player player && ownerUUID.equals(player.getUniqueId())) || sender.hasPermission("petcontrol.roam.others")) {
+                                if (tamableAnimal instanceof Cat) {
+                                    playerFacing.remove();
+                                    RoamingCat rcat = RoamingCat.convertFromCat((Cat) tamableAnimal, x, z, radius, false);
+                                    sender.sendMessage("§bCat is now roaming. UUID: " + rcat.getUUID());
+                                    enableRoamingInCache(tamableAnimal, rcat);
+                                    return true;
+                                } else if (tamableAnimal instanceof Wolf) {
+                                    playerFacing.remove();
+                                    RoamingDog rdog = RoamingDog.convertFromWolf((Wolf) tamableAnimal, x, z, radius, false);
+                                    sender.sendMessage("§bDog is now roaming. UUID: " + rdog.getUUID());
+                                    enableRoamingInCache(tamableAnimal, rdog);
+                                    return true;
                                 }
                             } else {
-                                sender.sendMessage("§cIncorrect usage:");
-                                sender.sendMessage("Usage: /roam <radius> [center x] [center z] [guarded]");
+                                sender.sendMessage("§4You do not have permission to make other player's animals roam.");
                                 return false;
                             }
                         } else {
-                            sender.sendMessage("§cCommand must be run on a tamed animal");
+                            sender.sendMessage("§cIncorrect usage:");
+                            sender.sendMessage("Usage: /roam <radius> [center x] [center z] [guarded]");
                             return false;
                         }
                     } else {
-                        sender.sendMessage("§cAnimal must be tamable!");
+                        sender.sendMessage("§cCommand must be run on a tamed animal");
                         return false;
                     }
                 } else {
-                    sender.sendMessage("§4You must face tamable animal.");
+                    sender.sendMessage("§cAnimal must be tamable!");
                     return false;
                 }
             } else {
-                sender.sendMessage("§4You do not have permission to use this command.");
-                return true;
+                sender.sendMessage("§4You must face tamable animal.");
+                return false;
             }
-        } else {
-            sender.sendMessage("Command must be run as a player.");
-            return false;
         }
-        sender.sendMessage("§4Unknown error. Please report this on GitHub issues.");
-        return false;
+        sender.sendMessage("§4You do not have permission to use this command.");
+        return true;
     }
 
     private void enableRoamingInCache(TamableAnimal oldAnimal, TamableAnimal newAnimal) {

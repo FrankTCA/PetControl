@@ -1,9 +1,11 @@
 package org.infotoast.petcontrol;
 
 import net.minecraft.world.entity.TamableAnimal;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -19,7 +21,9 @@ import org.infotoast.petcontrol.listener.PetListener;
 import org.infotoast.petcontrol.listener.PetSitOrStandTracker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class PetControl extends JavaPlugin {
@@ -29,6 +33,8 @@ public final class PetControl extends JavaPlugin {
     public static ScoreboardManager scoreboardManager;
     public static Team roamingTeam;
     private PetSitOrStandTracker petSitOrStandTracker;
+    public static HashMap<UUID, UUID> currentlySelectedPets = new HashMap<>();
+    public static final UUID NULL_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     public static final List<String> SUPPORTED_ANIMAL_TYPES =
             List.of("CAT", "WOLF", "HORSE", "FOX", "PARROT", "RABBIT", "COPPER_GOLEM", "IRON_GOLEM", "SNOW_GOLEM",
@@ -47,6 +53,7 @@ public final class PetControl extends JavaPlugin {
         getCommand("roam").setExecutor(new RoamCommand(this));
         getCommand("follow").setExecutor(new FollowCommand(this));
         getCommand("guard").setExecutor(new GuardCommand(this));
+        getCommand("pselect").setExecutor(new PSelectCommand(this));
         this.cacheManager = new CacheFileManager(this);
         this.cacheManager.onStartup();
         // Start tracking pets sitting/standing
@@ -73,7 +80,43 @@ public final class PetControl extends JavaPlugin {
         getServer().getConsoleSender().sendMessage("§l§bPetControl disabled.");
     }
 
-    public static Entity getPlayerFacingEntity(Player player) {
+    public static void setSelection(Player player, Entity entity) {
+        setSelectionByUUID(player.getUniqueId(), entity.getUniqueId());
+    }
+
+    public static void setSelectionByUUID(UUID player, UUID entity) {
+        currentlySelectedPets.put(player, entity);
+    }
+
+    public static void clearSelection(UUID player) {
+        currentlySelectedPets.remove(player);
+    }
+
+    public static Entity getPlayerFacingEntity(CommandSender sender) {
+        UUID senderUUID;
+        if (!(sender instanceof Player)) {
+            senderUUID = NULL_UUID;
+        } else {
+            senderUUID = ((Player) sender).getUniqueId();
+        }
+        UUID current = currentlySelectedPets.get(senderUUID);
+        if (current != null) {
+            return plugin.getServer().getEntity(current);
+        } else {
+            if (sender instanceof Player player) {
+                return getPlayerFacingEntityRaw(player);
+            } else {
+                sender.sendMessage("§4You are not a player and therefore cannot face an animal. Please use §a/pselect --uuid <uuid> §4to select an entity.");
+                return null;
+            }
+        }
+    }
+
+    public static Entity getFacingEntityForSelection(Player player) {
+        return getPlayerFacingEntityRaw(player);
+    }
+
+    private static Entity getPlayerFacingEntityRaw(Player player) {
         List<Entity> nearbyEntities = player.getNearbyEntities(10, 10, 10);
         ArrayList<LivingEntity> entitiesAlive = new ArrayList<LivingEntity>();
 

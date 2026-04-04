@@ -7,6 +7,8 @@ import org.infotoast.petcontrol.exception.EntityNotTamableException;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CacheFileManager {
@@ -134,6 +136,19 @@ public class CacheFileManager {
             }
         }
         return null;
+    }
+
+    public TamedAnimalEntry[] getTamedAnimalEntriesByAnimalNameAndOwnerUUID(UUID owner, String name) {
+        List<TamedAnimalEntry> matchingEntries = new ArrayList<>();
+        for (CacheFileEntry ent : data.animals) {
+            if (ent.getEntryType() == EntryType.TAMED) {
+                TamedAnimalEntry tamedAnimalEntry = (TamedAnimalEntry) ent;
+                if (tamedAnimalEntry.getName().equals(name) && tamedAnimalEntry.getOwnerUUID().equals(owner)) {
+                    matchingEntries.add(tamedAnimalEntry);
+                }
+            }
+        }
+        return matchingEntries.toArray(new TamedAnimalEntry[matchingEntries.size()]);
     }
 
     public void addTamedAnimalEntry(TamedAnimalEntry entry) {

@@ -23,58 +23,57 @@ public class TamePetCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            if (sender.hasPermission("petcontrol.tamepet.self") || sender.hasPermission("petcontrol.tamepet.others")) {
-                Player player = (Player) sender;
-                Entity playerFacing = PetControl.getPlayerFacingEntity(player);
-                if (playerFacing != null) {
-                    if (playerFacing instanceof Tameable) {
-                        Tameable tamableAnimal = (Tameable) playerFacing;
-                        if (!tamableAnimal.isTamed()) {
-                            OfflinePlayer newOwner;
-                            if (args.length == 1) {
-                                if (sender.hasPermission("petcontrol.tamepet.others")) {
-                                    String nextOwnerName = args[0];
-                                    newOwner = Bukkit.getOfflinePlayer(nextOwnerName);
-                                    if (!newOwner.hasPlayedBefore()) {
-                                        sender.sendMessage("§4Player either does not exist or has not played before!");
-                                        return false;
-                                    }
-                                } else {
-                                    sender.sendMessage("§4You do not have permission to tame pets for other people.");
-                                    return false;
-                                }
-                            } else if (args.length == 0) {
-                                if (sender.hasPermission("petcontrol.tamepet.self")) {
-                                    newOwner = (Player)sender;
-                                } else {
-                                    sender.sendMessage("§4You do not have permission to tame pets for yourself.");
+        if (sender.hasPermission("petcontrol.tamepet.self") || sender.hasPermission("petcontrol.tamepet.others")) {
+            Entity playerFacing = PetControl.getPlayerFacingEntity(sender);
+            if (playerFacing != null) {
+                if (playerFacing instanceof Tameable) {
+                    Tameable tamableAnimal = (Tameable) playerFacing;
+                    if (!tamableAnimal.isTamed()) {
+                        OfflinePlayer newOwner;
+                        if (args.length == 1) {
+                            if (sender.hasPermission("petcontrol.tamepet.others")) {
+                                String nextOwnerName = args[0];
+                                newOwner = Bukkit.getOfflinePlayer(nextOwnerName);
+                                if (!newOwner.hasPlayedBefore()) {
+                                    sender.sendMessage("§4Player either does not exist or has not played before!");
                                     return false;
                                 }
                             } else {
-                                sender.sendMessage("§4Too many arguments. Command usage: tamepet <Player>.");
+                                sender.sendMessage("§4You do not have permission to tame pets for other people.");
                                 return false;
                             }
-                            tamableAnimal.setOwner(newOwner);
-                            sender.sendMessage("§bAnimal has been tamed!");
-                            AnimalType animalType = PetControl.cacheManager.getAnimalTypeFromEntity(tamableAnimal);
-                            TamedAnimalEntry tae = new TamedAnimalEntry(animalType, tamableAnimal.getUniqueId(), newOwner.getUniqueId(), tamableAnimal.getName(), newOwner.getName(), true, false, false);
-                            PetControl.cacheManager.addTamedAnimalEntry(tae);
-                            return true;
+                        } else if (args.length == 0) {
+                            if (sender.hasPermission("petcontrol.tamepet.self")) {
+                                if (!(sender instanceof Player)) {
+                                    sender.sendMessage("§4You are the console or a command block! You cannot own animals! Please provide a player in the arguments.");
+                                    return false;
+                                }
+                                newOwner = (Player)sender;
+                            } else {
+                                sender.sendMessage("§4You do not have permission to tame pets for yourself.");
+                                return false;
+                            }
+                        } else {
+                            sender.sendMessage("§4Too many arguments. Command usage: tamepet <Player>.");
+                            return false;
                         }
-                        sender.sendMessage("§4Animal is already tamed! Use /transferpetowner instead.");
-                        return false;
+                        tamableAnimal.setOwner(newOwner);
+                        sender.sendMessage("§bAnimal has been tamed!");
+                        AnimalType animalType = PetControl.cacheManager.getAnimalTypeFromEntity(tamableAnimal);
+                        TamedAnimalEntry tae = new TamedAnimalEntry(animalType, tamableAnimal.getUniqueId(), newOwner.getUniqueId(), tamableAnimal.getName(), newOwner.getName(), true, false, false);
+                        PetControl.cacheManager.addTamedAnimalEntry(tae);
+                        return true;
                     }
-                    sender.sendMessage("§4That animal cannot be tamed.");
+                    sender.sendMessage("§4Animal is already tamed! Use /transferpetowner instead.");
                     return false;
                 }
-                sender.sendMessage("§4Please face an animal before sending this command.");
+                sender.sendMessage("§4That animal cannot be tamed.");
                 return false;
             }
-            sender.sendMessage("§4Access denied.");
-            return true;
+            sender.sendMessage("§4Please face an animal before sending this command.");
+            return false;
         }
-        sender.sendMessage("§4This command must be sent by a player!");
-        return false;
+        sender.sendMessage("§4Access denied.");
+        return true;
     }
 }

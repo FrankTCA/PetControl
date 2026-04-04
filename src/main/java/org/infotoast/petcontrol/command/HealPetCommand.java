@@ -18,27 +18,22 @@ public class HealPetCommand implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            if (sender.hasPermission("petcontrol.heal")) {
-                Player player = (Player) sender;
-                Entity playerFacing = PetControl.getPlayerFacingEntity(player);
-                if (playerFacing != null) {
-                    CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
-                    net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
-                    if (animalFacing instanceof TamableAnimal) {
-                        TamableAnimal tamableAnimalFacing = (TamableAnimal) animalFacing;
-                        tamableAnimalFacing.setHealth(tamableAnimalFacing.getMaxHealth());
-                        sender.sendMessage("§bAnimal healed!");
-                        return true;
-                    }
+        if (sender.hasPermission("petcontrol.heal")) {
+            Entity playerFacing = PetControl.getPlayerFacingEntity(sender);
+            if (playerFacing != null) {
+                CraftEntity craftPlayerFacing = (CraftEntity)playerFacing;
+                net.minecraft.world.entity.Entity animalFacing = craftPlayerFacing.getHandle();
+                if (animalFacing instanceof TamableAnimal) {
+                    TamableAnimal tamableAnimalFacing = (TamableAnimal) animalFacing;
+                    tamableAnimalFacing.setHealth(tamableAnimalFacing.getMaxHealth());
+                    sender.sendMessage("§bAnimal healed!");
+                    return true;
                 }
-                sender.sendMessage("§4You must face tamable animal.");
-                return false;
             }
-            sender.sendMessage("§4Access denied.");
-            return true;
+            sender.sendMessage("§4You must face tamable animal.");
+            return false;
         }
-        sender.sendMessage("§4You must be a player to use this command!");
-        return false;
+        sender.sendMessage("§4Access denied.");
+        return true;
     }
 }
